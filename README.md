@@ -1,6 +1,10 @@
 # re-datagrid
 
-A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
+A Datagrid component that is configurable with fields, etc.
+
+DOCS are a TODO
+
+[![Clojars Project](https://img.shields.io/clojars/v/re-datagrid.svg)](https://clojars.org/re-datagrid)
 
 ## Development Mode
 
