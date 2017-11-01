@@ -47,6 +47,7 @@
    (s/optional-key :can-reorder)                 s/Bool
    (s/optional-key :can-reorder-fn-up)           s/Any
    (s/optional-key :can-reorder-fn-down)         s/Any
+   (s/optional-key :on-record-click)             s/Any
    ;; handler to implement reordering.
    ;; NOTE: it's the handler's responsibility to do actual reordering, ie. swap records around!
    ;; TODO: make a macro in the crud handlers that automatically generates this handler

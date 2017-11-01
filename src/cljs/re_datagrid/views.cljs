@@ -402,6 +402,10 @@
                          ;;(:show-max-num-rows @options) (assoc :on-click (:expand-handler @options)))
                          false (assoc :on-click (:expand-handler @options)))
 
+            atts (if (:on-record-click @options)
+                   (assoc atts :on-click #((:on-record-click @options) record @fields @options))
+                   atts)
+
             cells (cond->> (doall
                             (map (fn [f]
                                    ^{:key (:name f)}
