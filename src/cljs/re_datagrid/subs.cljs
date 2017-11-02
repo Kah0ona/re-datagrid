@@ -4,7 +4,13 @@
              :refer-macros (log  trace  debug  info  warn  error  fatal  report
                                  logf tracef debugf infof warnf errorf fatalf reportf
                                  spy get-env log-env)]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [cljs-time.coerce :as coerce]
+            [cljs-time.format :as fmt]))
+
+;;TODO make this a dynamic var that can be set
+(def time-formatter (fmt/formatter "dd-MM-yyyy HH:mm"))
+(def date-formatter (fmt/formatter "dd-MM-yyyy"))
 
 (defn sensible-sort
   [k r]
@@ -17,37 +23,21 @@
 
 
 (defn sort-records
+  "Assumes a `:<k>-formatted` key exists in each record for k"
   [records fields k direction]
   (if (or (nil? k) (= :none direction))
     ;no sorting to be done, return records untouched.
     records
-    (let [dir-fn (if (= :asc direction) identity reverse)
+    (let [dir-fn  (if (= :asc direction) identity reverse)
           fmt-key (keyword (str (name k) "-formatted"))
-          field (first (filter #(= (:name %) k) fields))]
-      (if-let [formatter (->> fields
-                        (filter #(= (:name %) k))
-                        first
-                        :formatter)]
-        (dir-fn (sort-by
-                  ;sort formatted value of each record. Note: there is performance boost to be had though,
-                  ;because now upon rendering the formatters will be re-applied, potentially doing double the work
-                 (if (:sort-value-fn field)
-                   fmt-key
-                   (partial sensible-sort fmt-key))
-                 (map (fn [rec]
-                        (let [formatted-value (if (:sort-value-fn field) ;field has a custom sort value fn, to use for sorting
-                                                ((:sort-value-fn field) (get rec k) rec)
-                                                (formatter (get rec k) rec))]
-                                        ;each record will get a ...-formatted key, which will be used to sort
-                          (assoc rec fmt-key formatted-value))) records)))
-        ;no formatter in the field detected, normal sort on the original key 'k'
-        (dir-fn (sort-by
-                  (if (:sort-value-fn field)  ;field has a custom sort value fn, to use for sorting
-                    #(do
-;;                       (debug %)
-                       ((:sort-value-fn field) (get % k) %)) ; wrap in lambda because sort-value-fn takes [val rec]
-                    (partial sensible-sort k))
-                  records))))))
+          field   (first (filter #(= (:name %) k) fields))
+          sort-fn (if (:sort-value-fn field)
+                    #((:sort-value-fn field) (or (get % k) (get % fmt-key)) %)
+                    (partial sensible-sort fmt-key))]
+      (->> records
+           (sort-by sort-fn)
+           dir-fn))))
+
 (rf/reg-sub
  :datagrid/all
  (fn [db [_ id]]
@@ -90,20 +80,107 @@
  (fn [db [_ id]]
    (get-in db [:datagrid/data id :sorting])))
 
+(defn is-match?
+  [s q]
+  (let [s (if (string? s) s (str s))]
+    (debug s)
+    (cond
+      (nil? q) true
+      (empty? q) true
+
+      (and
+       (nil? s)
+       (not (nil? q))) false
+
+      :otherwise
+      (clojure.string/includes?
+       (clojure.string/lower-case s)
+       (clojure.string/lower-case q)))))
+
+(defn field-matches?
+  [record acc [field query]]
+  (debug record acc field query)
+  (let [v (get record (-> field name (str "-formatted") keyword))]
+    (debug v)
+    (and acc (is-match? v query))))
+
+(defn record-matches-filters?
+  [filters r]
+  (debug filters)
+  (reduce (partial field-matches? r)
+          true filters))
+
+(defn filter-by-header-filters
+  [records filters]
+  (filter (partial record-matches-filters? filters)
+          records))
+
+(defmulti default-formatter (fn [{t :type :as field}]
+                              (or t :default)))
+
+(defmethod default-formatter :default
+  [_]
+  identity)
+
+(defmethod default-formatter :yesno
+  [_]
+  (fn [v r]
+    (if v "ja" "nee")))
+
+(defmethod default-formatter :date
+  [_]
+  (fn [v r]
+    (let [v (coerce/from-date v)]
+      (fmt/unparse date-formatter v))))
+
+(defmethod default-formatter :date-time
+  [_]
+  (fn [v r]
+    (let [v (coerce/from-date v)]
+      (fmt/unparse time-formatter v))))
+
+(defn apply-formatters
+  "Applies formatters under <keyname>-formatted key"
+  [fields record]
+  (reduce
+   (fn [rec
+        {fmt :formatter
+         k   :name
+         :as field}]
+     ;;add formatted value
+     (let [fmt (or fmt (default-formatter field))]
+       (assoc rec (keyword (str (name k) "-formatted"))
+              (fmt (get record k) record))))
+   record
+   fields))
+
+(rf/reg-sub
+ ;;formats records according to the formatter
+ :datagrid/formatted-records
+ (fn [[_ id data-sub] _]
+   [(rf/subscribe [:datagrid/fields id])
+    (rf/subscribe [:datagrid/records data-sub])])
+ (fn [[fields records]]
+   (map (partial apply-formatters fields) records)))
+
 (rf/reg-sub
  :datagrid/sorted-records
  (fn [[_ id data-sub] _]
    [(rf/subscribe [:datagrid/options id])
-    (rf/subscribe [:datagrid/records data-sub])
+    (rf/subscribe [:datagrid/formatted-records id data-sub])
     (rf/subscribe [:datagrid/expanded? id])
     (rf/subscribe [:datagrid/sorting id])
-    (rf/subscribe [:datagrid/fields id])])
- (fn [[options records expanded? sorting fields] _]
-   (debug records)
+    (rf/subscribe [:datagrid/fields id])
+    (rf/subscribe [:datagrid/header-filter-values id])])
+ (fn [[options formatted-records expanded? sorting fields filters] _]
+   (debug filters)
    (let [rs (if (and (:key sorting)
                      (:direction sorting))
-              (sort-records records fields (:key sorting) (:direction sorting))
-              records)
+              (sort-records formatted-records fields (:key sorting) (:direction sorting))
+              formatted-records)
+         rs (if (:header-filters options)
+              (filter-by-header-filters rs filters)
+              rs)
          n (:show-max-num-rows options)]
      (if (and n (not expanded?))
        (take n rs)
@@ -198,3 +275,13 @@
  :datagrid/show-sure?
  (fn [db [_ id]]
    (get-in db [:datagrid/data id :show-sure?])))
+
+(rf/reg-sub
+ :datagrid/header-filter-values
+ (fn [db [_ id]]
+   (get-in db [:datagrid/data id :header-filter-values])))
+
+(rf/reg-sub
+ :datagrid/header-filter-value
+ (fn [db [_ id k]]
+   (get-in db [:datagrid/data id :header-filter-values k])))

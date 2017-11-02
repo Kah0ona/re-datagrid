@@ -33,19 +33,20 @@
    (assert (:data-subscription opts)
            "No subscription for records. Please set a :data-subscription re-frame subscribe pattern on init-time.")
    (let [id (:grid-id opts)]
-     (assoc-in db [:datagrid/data  id] {:options                 (extend-options-with-defaults opts)
-                                         :fields                  fields
-                                         :selected-records        #{}
-                                         :are-you-sure-callback   nil
-                                         :show-sure?              false
-                                         :creating?               false
-                                         :create-record           nil
-                                         :expanded?               false
-                                         :mass-select-check       false
-                                         :rec-marked-for-deletion nil
-                                         :edit-rows               {} ;; map of pk -> rec
-                                         :sorting                 {:key       nil
-                                                                   :direction nil}}))))
+     (assoc-in db [:datagrid/data  id] {:options                  (extend-options-with-defaults opts)
+                                        :fields                  fields
+                                        :selected-records        #{}
+                                        :are-you-sure-callback   nil
+                                        :show-sure?              false
+                                        :creating?               false
+                                        :create-record           nil
+                                        :expanded?               false
+                                        :mass-select-check       false
+                                        :rec-marked-for-deletion nil
+                                        :header-filter-values    {}
+                                        :edit-rows               {} ;; map of pk -> rec
+                                        :sorting                 {:key       nil
+                                                                  :direction nil}}))))
 
 (rf/reg-event-db
  :datagrid/sort-field
@@ -170,20 +171,25 @@
 (rf/reg-event-fx
  :datagrid/delete-record-maybe
  (fn [{db :db} [_ id record]]
-   (let [show? (get-in db [:datagrid/data  id :options :delete-are-you-sure-message])]
+   (let [show? (get-in db [:datagrid/data id :options :delete-are-you-sure-message])]
      (cond-> {:db (-> db
-                      (assoc-in [:datagrid/data  id :rec-marked-for-deletion] record)
-                      (assoc-in [:datagrid/data  id :show-sure?] show?))}
+                      (assoc-in [:datagrid/data id :rec-marked-for-deletion] record)
+                      (assoc-in [:datagrid/data id :show-sure?] show?))}
        (not show?)
        (assoc :dispatch [:datagrid/delete-record id])))))
 
 (rf/reg-event-fx
  :datagrid/delete-record
  (fn [{db :db} [_ id]]
-   (let [delete-dispatch (get-in db [:datagrid/data  id :options :delete-dispatch])
-         record          (get-in db [:datagrid/data  id :rec-marked-for-deletion])]
+   (let [delete-dispatch (get-in db [:datagrid/data id :options :delete-dispatch])
+         record          (get-in db [:datagrid/data id :rec-marked-for-deletion])]
      (assert record)
      {:db       (-> db
-                    (assoc-in [:datagrid/data  id :show-sure?] false)
-                    (assoc-in [:datagrid/data  id :options :rec-marked-for-deletion] nil))
+                    (assoc-in [:datagrid/data id :show-sure?] false)
+                    (assoc-in [:datagrid/data id :options :rec-marked-for-deletion] nil))
       :dispatch (conj delete-dispatch record)})))
+
+(rf/reg-event-db
+ :datagrid/header-filter-value
+ (fn [db [_ id k v]]
+   (assoc-in db [:datagrid/data id :header-filter-values k] v)))

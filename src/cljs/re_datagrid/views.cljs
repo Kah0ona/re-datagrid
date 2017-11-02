@@ -99,23 +99,54 @@
      {:on-click #(rf/dispatch [:datagrid/start-edit id pk record])}
      [:i.zmdi.zmdi-edit]]])
 
-(defn table-header-cell
-  [id {:keys [title align width can-sort] :as field}]
-  (let [align (if-not align :text-left align)
-        atts  (cond-> {:className align
-                       :key (name (:name field))
-                       :on-click #(rf/dispatch [:datagrid/sort-field id (:name field)])}
+(defmulti table-header-filter (fn [id field]
+                                (:type field)))
 
-                width
-                (assoc :style {:width width}))
-        sorting (rf/subscribe [:datagrid/sorting id])]
+(defmethod table-header-filter :default
+  [id {:keys [name] :as field}]
+  (let [v (rf/subscribe [:datagrid/header-filter-value id name])]
+    (fn [id {:keys [name] :as field}]
+      [:div.table-header-filter.m-b-10
+       [:input.form-control
+        {:value     (or @v "")
+         :placeholder "Filter..."
+         :on-change #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value)])
+         :type      :text}]])))
+
+(defmethod table-header-filter :number
+  [id {:keys [name] :as field}]
+  (let [v (rf/subscribe [:datagrid/header-filter-value id name])]
+    (fn [id {:keys [name] :as field}]
+      [:div.table-header-filter.m-b-10
+       [:input.form-control
+        {:value     (or @v "")
+         :placeholder "Filter..."
+         :on-change #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value )])
+         :type      :number}]])))
+
+(defn table-header-cell
+  [id {:keys [title align width can-sort hide-header-filter] :as field}]
+  (let [align   (if-not align :text-left align)
+        atts    (cond-> {:className align
+                         :key (name (:name field))}
+                  width
+                  (assoc :style {:width width}))
+        sorting (rf/subscribe [:datagrid/sorting id])
+        options (rf/subscribe [:datagrid/options id])]
     (fn [id {:keys [title align width can-sort] :as field}]
-      (let [sort-by-key    (:key @sorting)
-            sort-direction (:direction @sorting)]
+      (let [sort-by-key      (:key @sorting)
+            sort-direction   (:direction @sorting)
+            can-sort-global? (:can-sort @options)
+            header-filters?  (:header-filters @options)]
         [:th atts
-         (if can-sort
+
+         (if (or can-sort-global? can-sort)
            [:a.column-header-anchor
-            [:span.text.m-r-5 title]
+
+            [:span.text.m-r-5
+             {:style    {:cursor :pointer}
+              :on-click #(rf/dispatch [:datagrid/sort-field id (:name field)])}
+             title]
             (cond
               (and
                (= (:name field) sort-by-key)
@@ -142,7 +173,12 @@
               :otherwise
               [:i {:style {:display :inline-block
                            :width   "5px"
-                           :height  "5px"}}])])]))))
+                           :height  "5px"}}])])
+
+         (when (and header-filters?
+                    (or (nil? hide-header-filter)
+                        (not hide-header-filter)))
+           [table-header-filter id field])]))))
 
 (defn mass-select
   [id data-sub]
@@ -266,79 +302,44 @@
   (fn [_ {t :type} _]
     (or t :string)))
 
-(defmethod table-cell :yesno
-  [id field record]
-  (let [fieldname (:name field)
-        value (get record fieldname)
-        align (if (nil? (:align field)) :text-left (:align field))
-        formatted-value (if (:formatter field)
-                          ((:formatter field) value record)
-                          ;else, no formatter overruling
-                          (if value "ja" "nee"))]
-    [:td {:key (:name field) :className align } formatted-value]))
-
 
 (defmethod table-cell :custom
   [id field record]
   (let [is-clickable? (not (nil? (:on-click field)))
-        fieldname (:name field)
-        formatter (:formatter field)
-        value (get record fieldname)
-        align (if (nil? (:align field)) :text-left (:align field))]
+        fieldname     (:name field)
+        fmt-fieldname (-> field :name name (str "-formatted") keyword)
+        value         (or
+                       (get record fmt-fieldname)
+                       (get record fieldname))
+        align         (if (nil? (:align field)) :text-left (:align field))]
     [:td {:key (:name field) :className align}
      [:span {:on-click #((:custom-element-click field) record)}
       [(:custom-element-renderer field) record]]]))
-
-(defmethod table-cell :date
-  [id field record]
-  (let [is-clickable? (not (nil? (:on-click field)))
-        fieldname (:name field)
-        formatter (:formatter field)
-        value (get record fieldname)
-        align (if (nil? (:align field)) :text-left (:align field))
-        parsed-value (coerce/from-date value)
-        formatted-value (if (nil? formatter)
-                         (fmt/unparse dutch-formatter-date parsed-value)
-                          (formatter value record))]
-    [:td {:key (:name field) :className align} formatted-value]))
-
-(defmethod table-cell :date-time
-  [id field record]
-  (let [is-clickable? (not (nil? (:on-click field)))
-        fieldname (:name field)
-        formatter (:formatter field)
-        value (get record fieldname)
-        align (if (nil? (:align field)) :text-left (:align field))
-        parsed-value (coerce/from-date value)
-        formatted-value (if (nil? formatter)
-                          (if (not (nil? parsed-value))
-                            (fmt/unparse dutch-formatter parsed-value)
-                            "")
-                          (formatter value record))]
-    [:td {:key (:name field) :className align} formatted-value]))
 
 (defmethod table-cell :default
   [id field record]
   (let [options (rf/subscribe [:datagrid/options id])]
     (fn [id field record]
-      (let [is-clickable?    (not (nil? (:on-click field)))
-            fieldname        (:name field)
-            formatter        (:formatter field)
-            value            (get record fieldname)
-            align            (if (nil? (:align field)) :text-left (:align field))
-            formatted-value  (if (nil? formatter)
-                               value
-                               (formatter value record))
-            formatted-value' (if is-clickable?
-                               [:a.table-link {:on-click
-                                               (fn [e]
-                                                 (let [f (:on-click field)]
-                                                   (f record field e @options)))}
-                                formatted-value]
-                               formatted-value)]
-        [:td {:key       (:name field)
+      (let [is-clickable?   (not (nil? (:on-click field)))
+            formatter       (:formatter field)
+            fieldname       (:name field)
+            fmt-fieldname   (-> field :name name (str "-formatted") keyword)
+            _ (debug fieldname fmt-fieldname)
+            formatted-value (or
+                             (get record fmt-fieldname)
+                             (get record fieldname))
+            _ (debug record)
+            align           (if (nil? (:align field)) :text-left (:align field))
+            formatted-value (if is-clickable?
+                              [:a.table-link {:on-click
+                                              (fn [e]
+                                                (let [f (:on-click field)]
+                                                  (f record field e @options)))}
+                               formatted-value]
+                              formatted-value)]
+        [:td {:key       fieldname
               :className align}
-         formatted-value']))))
+         formatted-value]))))
 
 (defn command-td
   [id

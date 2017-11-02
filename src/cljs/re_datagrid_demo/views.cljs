@@ -12,16 +12,33 @@
   {:grid-id           :my-grid
    :data-subscription [:data]
    :id-field          :id
+   :header-filters    true
+   :can-sort          true
    :create-dispatch   [:create]
    :update-dispatch   [:update]
-   :delete-dispatch   [:delete]
-   })
+   :delete-dispatch   [:delete]})
 
 (def fields
-  [{:name :firstname
-    :title "Firstname"}
-   {:name :surname
-    :title "Surname"}])
+  [{:name     :id
+    :can-sort true
+    :title    "ID"
+    :type     :number}
+   {:name      :firstname
+    :can-sort  true
+    :formatter (fn [v r]
+                 [:b v])
+    :title     "Firstname"}
+   {:name  :surname
+    :title "Surname"}
+   {:name  :birthdate
+    :type  :date
+    :title "Birthdate"}
+   {:name  :login
+    :type  :date-time
+    :title "Logged in at"}
+   {:name  :male
+    :type  :yesno
+    :title "Male?"}])
 
 (defn main-panel
   []
