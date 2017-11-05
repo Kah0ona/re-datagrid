@@ -28,7 +28,6 @@
   (let [options          (rf/subscribe [:datagrid/options id])
         record-selected? (rf/subscribe [:datagrid/record-selected? id record])]
     (fn [id record]
-      (debug @record-selected?)
       (let [pkey (:id-field @options)]
         [:td.check {:key (str "checkbox_" (get record pkey))}
          [:input {:type      :checkbox
@@ -330,11 +329,9 @@
             formatter       (:formatter field)
             fieldname       (:name field)
             fmt-fieldname   (-> field :name name (str "-formatted") keyword)
-            _ (debug fieldname fmt-fieldname)
             formatted-value (or
                              (get record fmt-fieldname)
                              (get record fieldname))
-            _ (debug record)
             align           (if (nil? (:align field)) :text-left (:align field))
             formatted-value (if is-clickable?
                               [:a.table-link {:on-click

@@ -103,7 +103,6 @@
 
 (defn record-matches-filters?
   [filters r]
-  (debug filters)
   (reduce (partial field-matches? r)
           true filters))
 
@@ -174,7 +173,6 @@
     (rf/subscribe [:datagrid/fields id])
     (rf/subscribe [:datagrid/header-filter-values id])])
  (fn [[options formatted-records expanded? sorting fields filters] _]
-   (debug filters)
    (let [rs (if (and (:key sorting)
                      (:direction sorting))
               (sort-records formatted-records fields (:key sorting) (:direction sorting))
@@ -207,7 +205,6 @@
  (fn [[_ id] _]
    (rf/subscribe [:datagrid/edit-rows id]))
  (fn [edit-rows]
-   (debug edit-rows)
    (not (empty? edit-rows))))
 
 (rf/reg-sub
@@ -249,7 +246,6 @@
     (rf/subscribe [:datagrid/primary-key id])
     (rf/subscribe [:datagrid/sorted-records id data-sub])])
  (fn [[pks pk-key records] _]
-   (debug pks pk-key records)
    (filter #(some #{(get % pk-key)} pks)
            records)))
 
