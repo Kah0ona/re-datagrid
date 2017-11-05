@@ -83,7 +83,6 @@
 (defn is-match?
   [s q]
   (let [s (if (string? s) s (str s))]
-    (debug s)
     (cond
       (nil? q) true
       (empty? q) true
@@ -99,9 +98,7 @@
 
 (defn field-matches?
   [record acc [field query]]
-  (debug record acc field query)
   (let [v (get record (-> field name (str "-formatted") keyword))]
-    (debug v)
     (and acc (is-match? v query))))
 
 (defn record-matches-filters?
@@ -130,14 +127,18 @@
 (defmethod default-formatter :date
   [_]
   (fn [v r]
-    (let [v (coerce/from-date v)]
-      (fmt/unparse date-formatter v))))
+    (if v
+      (let [v (coerce/from-date v)]
+        (fmt/unparse date-formatter v))
+      "")))
 
 (defmethod default-formatter :date-time
   [_]
   (fn [v r]
-    (let [v (coerce/from-date v)]
-      (fmt/unparse time-formatter v))))
+    (if v
+      (let [v (coerce/from-date v)]
+        (fmt/unparse time-formatter v))
+      "")))
 
 (defn apply-formatters
   "Applies formatters under <keyname>-formatted key"

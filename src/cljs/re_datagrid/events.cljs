@@ -45,8 +45,9 @@
                                         :rec-marked-for-deletion nil
                                         :header-filter-values    {}
                                         :edit-rows               {} ;; map of pk -> rec
-                                        :sorting                 {:key       nil
-                                                                  :direction nil}}))))
+                                        :sorting                 {:key       (:default-sort-key opts)
+                                                                  :direction (when (:default-sort-key opts)
+                                                                               (or (:default-sort-direction opts) :asc))}}))))
 
 (rf/reg-event-db
  :datagrid/sort-field
@@ -149,7 +150,6 @@
 (rf/reg-event-db
  :datagrid/start-edit
  (fn [db [_ id pk record]]
-   (debug id pk record)
    (assoc-in db [:datagrid/data  id :edit-rows pk] record)))
 
 

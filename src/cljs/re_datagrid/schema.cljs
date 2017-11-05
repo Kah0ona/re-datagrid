@@ -44,6 +44,8 @@
    (s/optional-key :can-edit-fn)                 s/Any
    (s/optional-key :can-create)                  s/Bool
    (s/optional-key :can-delete)                  s/Bool
+   (s/optional-key :default-sort-key)            s/Keyword
+   (s/optional-key :default-sort-direction)      s/Keyword
    (s/optional-key :can-reorder)                 s/Bool
    (s/optional-key :can-reorder-fn-up)           s/Any
    (s/optional-key :can-reorder-fn-down)         s/Any
@@ -67,9 +69,9 @@
    (s/optional-key :on-selection-change)         s/Any
    ;;callback fn that gets set of all selected records as argumentlist
    :data-subscription                            s/Any
-   (s/optional-key :create-dispatch)                              s/Any
-   (s/optional-key :update-dispatch)                              s/Any
-   (s/optional-key :delete-dispatch)                              s/Any})
+   (s/optional-key :create-dispatch)             s/Any
+   (s/optional-key :update-dispatch)             s/Any
+   (s/optional-key :delete-dispatch)             s/Any})
 
 (def GridField
   "A schema for grid field configuration"
