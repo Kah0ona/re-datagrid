@@ -268,7 +268,9 @@
        (let [v (get @r (:name field))]
          [:td {:key       (:name field)
                :className "editing"}
-          ((:formatter field) v @r)])))])
+          (if (:formatter field)
+            ((:formatter field) v @r)
+            v)])))])
 
 
 (defmethod edit-cell :default
