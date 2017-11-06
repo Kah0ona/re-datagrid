@@ -263,7 +263,7 @@
   [id field pk]
   [:td {:key       (:name field)
         :className ""}
-   (let [r (rf/subscribe [:datagrid/edited-record-by-pk id pk])]
+   (let [r (rf/subscribe [:datagrid/edited-record-by-pk id pk]))]
      (fn [id field pk]
        (let [v (get @r (:name field))]
          [:td {:key       (:name field)
@@ -296,9 +296,9 @@
 (defn edit-row
   "shows a row with inline editing elements"
   [id pk]
-  (let [fields           (rf/subscribe [:datagrid/fields id])]
+  (let [fields (rf/subscribe [:datagrid/fields id])]
     (fn [id pk]
-      (let [cells (doall
+      (let [cells       (doall
                          (map (fn [f]
                                 ^{:key (:name f)}
                                 [edit-cell id f pk]) @fields))

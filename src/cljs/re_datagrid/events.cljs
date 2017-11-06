@@ -150,7 +150,7 @@
 (rf/reg-event-db
  :datagrid/start-edit
  (fn [db [_ id pk record]]
-   (assoc-in db [:datagrid/data  id :edit-rows pk] record)))
+   (assoc-in db [:datagrid/data id :edit-rows pk] record)))
 
 
 (rf/reg-event-fx
