@@ -29,6 +29,7 @@
                  [:b v])
     :title     "Firstname"}
    {:name  :surname
+    :type :no-edit
     :title "Surname"}
    {:name  :birthdate
     :type  :date

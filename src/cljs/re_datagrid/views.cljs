@@ -261,16 +261,14 @@
 
 (defmethod edit-cell :no-edit
   [id field pk]
-  [:td {:key       (:name field)
-        :className ""}
-   (let [r (rf/subscribe [:datagrid/edited-record-by-pk id pk]))]
-     (fn [id field pk]
-       (let [v (get @r (:name field))]
-         [:td {:key       (:name field)
-               :className "editing"}
-          (if (:formatter field)
-            ((:formatter field) v @r)
-            v)])))])
+  (let [r (rf/subscribe [:datagrid/edited-record-by-pk id pk])]
+    (fn [id field pk]
+      (let [v (get @r (:name field))]
+        [:td {:key       (:name field)
+              :className "editing"}
+         (if (:formatter field)
+           ((:formatter field) v @r)
+           v)]))))
 
 
 (defmethod edit-cell :default
