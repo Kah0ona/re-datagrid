@@ -80,5 +80,4 @@
      :compiler     {:main          re-datagrid.runner
                     :output-to     "resources/public/js/compiled/test.js"
                     :output-dir    "resources/public/js/compiled/test/out"
-                    :optimizations :none}}
-    ]})
+                    :optimizations :none}}]})
