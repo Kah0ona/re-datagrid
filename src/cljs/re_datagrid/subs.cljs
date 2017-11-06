@@ -149,10 +149,6 @@
          :as field}]
      ;;add formatted value
      (let [fmt (or fmt (default-formatter field))]
-       (debug record)
-       (debug rec)
-       (debug (name k) (keyword (str (name k) "-formatted")))
-;;       (debug (fmt (get record k) record))
        (assoc rec (keyword (str (name k) "-formatted"))
               (fmt (get record k) record))))
    record
