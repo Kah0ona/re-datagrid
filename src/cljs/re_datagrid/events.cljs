@@ -156,10 +156,13 @@
 (rf/reg-event-fx
  :datagrid/reorder
  (fn [{db :db} [_ id direction record]]
+   (assert (get-in db [:datagrid/data id :options :reorder-dispatch]) "There is no :reorder-dispatch set in the options!")
    (debug "reorder " id "," direction "," record)
-   (let [disp (-> (get-in db [:datagrid/data  id :options :reorder-dispatch])
-                  (conj direction)
-                  (conj record))]
+   (let [disp (-> db
+                  (get-in [:datagrid/data id :options :reorder-dispatch])
+                  (concat [direction record])
+                  vec)]
+     (debug disp)
      {:db       db
       :dispatch disp})))
 

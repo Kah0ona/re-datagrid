@@ -315,7 +315,6 @@
   (fn [_ {t :type} _]
     (or t :string)))
 
-
 (defmethod table-cell :custom
   [id field record]
   (let [is-clickable? (not (nil? (:on-click field)))
@@ -328,9 +327,6 @@
     [:td {:key (:name field) :className align}
      [:span {:on-click #((:custom-element-click field) record)}
       [(:custom-element-renderer field) record]]]))
-
-
-
 
 (defmethod table-cell :default
   [id field record]

@@ -44,3 +44,31 @@
                  r'))
              %1)
            r)))
+
+(defn swap [v i1 i2]
+  (assoc v i2 (v i1) i1 (v i2)))
+
+
+(defn index-of [coll v pk]
+  (let [i (count (take-while #(not= (get v pk) (get % pk)) coll))]
+    (when (or (< i (count coll))
+              (= (get v pk) (get (last coll) pk)))
+      i)))
+
+(defn move
+  [db direction record]
+  (let [i (index-of (:data db) record :id)
+        i2 (if (= :up direction)
+             (dec i)
+             (inc i))
+        n (count (:data db))
+        data (if (and (>= i2 0) (< i2 n)
+                      (>= i 0) (< i n))
+               (swap (:data db) i i2)
+               (:data db))]
+    (assoc db :data data)))
+
+(rf/reg-event-db
+ :reorder
+ (fn [db [_ direction record]]
+   (move db direction record)))

@@ -14,6 +14,8 @@
    :id-field          :id
    :header-filters    true
    :can-sort          true
+   :can-reorder       true
+   :reorder-dispatch  [:reorder]
    :create-dispatch   [:create]
    :update-dispatch   [:update]
    :delete-dispatch   [:delete]})
