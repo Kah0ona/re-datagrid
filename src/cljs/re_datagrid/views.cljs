@@ -15,6 +15,15 @@
                                   spy get-env log-env)]))
 
 
+(defn clean-formatted-keys
+  [r]
+  (into {}
+        (remove
+         (fn [[k v]]
+           (clojure.string/ends-with? (name k) "-formatted" ))
+         r)))
+
+
 (def dutch-formatter (fmt/formatter "dd-MM-yyyy HH:mm"))
 (def dutch-formatter-date (fmt/formatter "dd-MM-yyyy"))
 
@@ -95,7 +104,7 @@
   [id pk record]
   [:span {:key "EDITING" :className "edit"}
     [:button.btn.btn-xs.btn-info.waves-effect.waves-circle.waves-float
-     {:on-click #(rf/dispatch [:datagrid/start-edit id pk record])}
+     {:on-click #(rf/dispatch [:datagrid/start-edit id pk (clean-formatted-keys record)])}
      [:i.zmdi.zmdi-edit]]])
 
 (defmulti table-header-filter (fn [id field]
@@ -303,13 +312,6 @@
             save-button ^{:key pk} [save-cell-button id pk]]
         [:tr.editing {:key pk} (concat cells [save-button])]))))
 
-(defn clean-formatted-keys
-  [r]
-  (into {}
-        (remove
-         (fn [[k v]]
-           (clojure.string/ends-with? (name k) "-formatted" ))
-         r)))
 
 (defmulti table-cell
   (fn [_ {t :type} _]
@@ -378,12 +380,12 @@
        (when (and can-reorder
                   (or (nil? can-reorder-fn-up)
                       (can-reorder-fn-up record @sorted-records)))
-         [reorder-cell-button-up #(rf/dispatch [:datagrid/reorder id :up record])])
+         [reorder-cell-button-up #(rf/dispatch [:datagrid/reorder id :up (clean-formatted-keys record)])])
 
        (when (and can-reorder
                   (or (nil? can-reorder-fn-down)
                       (can-reorder-fn-down record @sorted-records)))
-         [reorder-cell-button-down #(rf/dispatch [:datagrid/reorder id :down record])])
+         [reorder-cell-button-down #(rf/dispatch [:datagrid/reorder id :down (clean-formatted-keys record)])])
 
        (when
            (and can-delete
