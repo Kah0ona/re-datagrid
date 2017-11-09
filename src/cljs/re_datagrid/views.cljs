@@ -303,6 +303,14 @@
             save-button ^{:key pk} [save-cell-button id pk]]
         [:tr.editing {:key pk} (concat cells [save-button])]))))
 
+(defn clean-formatted-keys
+  [r]
+  (into {}
+        (remove
+         (fn [[k v]]
+           (clojure.string/ends-with? (name k) "-formatted" ))
+         r)))
+
 (defmulti table-cell
   (fn [_ {t :type} _]
     (or t :string)))
@@ -321,6 +329,9 @@
      [:span {:on-click #((:custom-element-click field) record)}
       [(:custom-element-renderer field) record]]]))
 
+
+
+
 (defmethod table-cell :default
   [id field record]
   (let [options (rf/subscribe [:datagrid/options id])]
@@ -337,7 +348,9 @@
                               [:a.table-link {:on-click
                                               (fn [e]
                                                 (let [f (:on-click field)]
-                                                  (f record field e @options)))}
+                                                  (f (clean-formatted-keys record)
+                                                     field e
+                                                     @options)))}
                                formatted-value]
                               formatted-value)]
         [:td {:key       fieldname
