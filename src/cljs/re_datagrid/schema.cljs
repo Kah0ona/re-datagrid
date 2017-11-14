@@ -83,7 +83,7 @@
    (s/optional-key :on-click)                     s/Any
    (s/optional-key :footer-cell)                  s/Any
    (s/optional-key :validators)                   s/Any
-   (s/optional-key :align)                        s/Keyword
+   (s/optional-key :align)                        s/Any
    (s/optional-key :custom-element-renderer)      s/Any
    (s/optional-key :custom-element-edit-renderer) s/Any
                                         ;click callback which gets passed in a record that was being clicked
