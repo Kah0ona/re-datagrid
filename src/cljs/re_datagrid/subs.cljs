@@ -161,7 +161,6 @@
    [(rf/subscribe [:datagrid/fields id])
     (rf/subscribe [:datagrid/records data-sub])])
  (fn [[fields records]]
-   (debug fields)
    (map (partial apply-formatters fields) records)))
 
 (rf/reg-sub
