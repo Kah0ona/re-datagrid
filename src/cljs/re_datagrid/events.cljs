@@ -52,12 +52,14 @@
 (rf/reg-event-db
  :datagrid/update-options
  (fn [db [_ o]]
+   (debug "updating options")
    (assoc-in db [:datagrid/data grid-id :options] o)))
 
 
 (rf/reg-event-db
  :datagrid/update-fields
  (fn [db [_ o]]
+   (debug "updating fields")
    (assoc-in db [:datagrid/data grid-id :fields] o)))
 
 
