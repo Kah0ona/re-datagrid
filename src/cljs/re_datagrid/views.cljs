@@ -530,10 +530,11 @@
         ;;else
         (let []
           (when (not= options @current-options)
-            (rf/dispatch [:datagrid/update-options options]))
+            (rf/dispatch [:datagrid/update-options id options]))
           (when (not= fields @current-fields)
-            (rf/dispatch [:datagrid/update-fields fields]))
+            (rf/dispatch [:datagrid/update-fields id fields]))
           [:div
+
            (when @show-sure?
              [are-you-sure-modal id])
            [:div.table-responsive
