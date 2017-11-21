@@ -50,6 +50,19 @@
                                                                                (or (:default-sort-direction opts) :asc))}}))))
 
 (rf/reg-event-db
+ :datagrid/update-options
+ (fn [db [_ o]]
+   (assoc-in db [:data :datagrids grid-id :options] o)))
+
+
+(rf/reg-event-db
+ :datagrid/update-fields
+ (fn [db [_ o]]
+   (assoc-in db [:data :datagrids grid-id :fields] o)))
+
+
+
+(rf/reg-event-db
  :datagrid/sort-field
  (fn [db [_ grid-id field-name]]
    (debug "Sorting" grid-id ", field:" field-name " in direction:"

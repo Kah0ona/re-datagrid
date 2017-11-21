@@ -186,7 +186,10 @@
          (when (and header-filters?
                     (or (nil? hide-header-filter)
                         (not hide-header-filter)))
-           [table-header-filter id field])]))))
+           [table-header-filter id field])
+
+         (when (and header-filters? hide-header-filter)
+           [:div.m-b-10 {:style {:height "35px"}} " "])]))))
 
 (defn mass-select
   [id data-sub]
@@ -309,7 +312,7 @@
                          (map (fn [f]
                                 ^{:key (:name f)}
                                 [edit-cell id f pk]) @fields))
-            save-button ^{:key pk} [save-cell-button id pk]]
+            save-button ^{:key (or pk -1)} [save-cell-button id pk]]
         [:tr.editing {:key pk} (concat cells [save-button])]))))
 
 
@@ -506,13 +509,15 @@
   "Creates a datagrid"
   [options :- ds/GridConfiguration
    fields  :- [ds/GridField]]
-  (let [id           (:grid-id options)
-        data-sub     (:data-subscription options)
-        creating?    (rf/subscribe [:datagrid/creating? id])
-        show-sure?   (rf/subscribe [:datagrid/show-sure? id])
+  (let [id              (:grid-id options)
+        data-sub        (:data-subscription options)
+        creating?       (rf/subscribe [:datagrid/creating? id])
+        show-sure?      (rf/subscribe [:datagrid/show-sure? id])
         ;; we do this aliassing, since we have 'sorted-records' depend on this one
-        records      (rf/subscribe [:datagrid/records data-sub])
-        initialized? (rf/subscribe [:datagrid/initialized? id])]
+        records         (rf/subscribe [:datagrid/records data-sub])
+        current-options (rf/subscribe [:datagrid/options id])
+        current-fields  (rf/subscribe [:datagrid/fields id])
+        initialized?    (rf/subscribe [:datagrid/initialized? id])]
     (fn [options fields]
       (if-not @initialized?
         (do (rf/dispatch [:datagrid/initialize options fields])
@@ -524,25 +529,29 @@
                [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]])
         ;;else
         (let []
-              [:div
-               (when @show-sure?
-                 [are-you-sure-modal id])
-               [:div.table-responsive
-                [:table.table.bootgrid-table
-                 (when-not (:hide-heading options)
-                   [table-header id data-sub])
+          (when (not= options @current-options)
+            (rf/dispatch [:datagrid/update-options options]))
+          (when (not= fields @current-fields)
+            (rf/dispatch [:datagrid/update-fields fields]))
+          [:div
+           (when @show-sure?
+             [are-you-sure-modal id])
+           [:div.table-responsive
+            [:table.table.bootgrid-table
+             (when-not (:hide-heading options)
+               [table-header id data-sub])
 
-                 (when-not (empty?
-                            (filter (fn [f]
-                                      (not (nil? (:footer-cell f)))) fields))
-                   [table-footer id fields @records])
+             (when-not (empty?
+                        (filter (fn [f]
+                                  (not (nil? (:footer-cell f)))) fields))
+               [table-footer id fields @records])
 
-                 (if (and (empty? @records)
-                          (not @creating?))
-                   [:tbody
-                    [:tr
-                     [:td.nodata {:style   {:padding-top "20px"}
-                                  :colSpan (count fields)}
-                      [:i "Geen gegevens gevonden."]]]]
-                   ;;else
-                   [table-data id (:data-subscription options)])]]])))))
+             (if (and (empty? @records)
+                      (not @creating?))
+               [:tbody
+                [:tr
+                 [:td.nodata {:style   {:padding-top "20px"}
+                              :colSpan (count fields)}
+                  [:i "Geen gegevens gevonden."]]]]
+               ;;else
+               [table-data id (:data-subscription options)])]]])))))
