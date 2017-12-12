@@ -58,6 +58,9 @@
    (s/optional-key :reorder-dispatch)            s/Any
    (s/optional-key :hide-heading)                s/Bool
    (s/optional-key :delete-are-you-sure-message) s/Str
+   (s/optional-key :delete-are-you-sure-title)   s/Str
+   (s/optional-key :yes-text)                    s/Str
+   (s/optional-key :no-text)                     s/Str
    ;;callback that provides row grained control wether to show a delete button.
    ;;takes a record as input, should return true/false
    (s/optional-key :can-delete-fn)               s/Any

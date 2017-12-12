@@ -54,13 +54,15 @@
         [:div.icon.warning.pulseWarning
          [:span.body.pulseWarningIns]
          [:span.dot.pulseWarningIns]]
-        [:h2 "Weet u zeker dat u deze rij wilt verwijderen?"]
+        [:h2 (:delete-are-you-sure-title @options)]
         [:p.lead.text-muted (:delete-are-you-sure-message @options)]
         [:p
          [:button.btn.cancel.btn-lg.btn-default
-          {:on-click #(rf/dispatch [:datagrid/show-are-you-sure-popup id false])} "Nee"]
+          {:on-click #(rf/dispatch [:datagrid/show-are-you-sure-popup id false])}
+          (:no-text @options)]
          [:button.btn.btn-lg.confirm.btn-warning
-          {:on-click #(rf/dispatch [:datagrid/delete-record id])} "Ja"]]]])))
+          {:on-click #(rf/dispatch [:datagrid/delete-record id])}
+          (:yes-text @options)]]]])))
 
 (defn create-button
   [id]

@@ -33,21 +33,23 @@
    (assert (:data-subscription opts)
            "No subscription for records. Please set a :data-subscription re-frame subscribe pattern on init-time.")
    (let [id (:grid-id opts)]
-     (assoc-in db [:datagrid/data  id] {:options                  (extend-options-with-defaults opts)
-                                        :fields                  fields
-                                        :selected-records        #{}
-                                        :are-you-sure-callback   nil
-                                        :show-sure?              false
-                                        :creating?               false
-                                        :create-record           nil
-                                        :expanded?               false
-                                        :mass-select-check       false
-                                        :rec-marked-for-deletion nil
-                                        :header-filter-values    {}
-                                        :edit-rows               {} ;; map of pk -> rec
-                                        :sorting                 {:key       (:default-sort-key opts)
-                                                                  :direction (when (:default-sort-key opts)
-                                                                               (or (:default-sort-direction opts) :asc))}}))))
+     (assoc-in db [:datagrid/data id] {:options                 (extend-options-with-defaults opts)
+                                       :fields                  fields
+                                       :selected-records        #{}
+                                       :are-you-sure-callback   nil
+                                       :show-sure?              (if (:delete-are-you-sure-title opts)
+                                                                  true
+                                                                  false)
+                                       :creating?               false
+                                       :create-record           nil
+                                       :expanded?               false
+                                       :mass-select-check       false
+                                       :rec-marked-for-deletion nil
+                                       :header-filter-values    {}
+                                       :edit-rows               {} ;; map of pk -> rec
+                                       :sorting                 {:key       (:default-sort-key opts)
+                                                                 :direction (when (:default-sort-key opts)
+                                                                              (or (:default-sort-direction opts) :asc))}}))))
 
 (rf/reg-event-db
  :datagrid/update-options
