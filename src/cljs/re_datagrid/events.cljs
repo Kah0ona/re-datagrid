@@ -37,9 +37,7 @@
                                        :fields                  fields
                                        :selected-records        #{}
                                        :are-you-sure-callback   nil
-                                       :show-sure?              (if (:delete-are-you-sure-title opts)
-                                                                  true
-                                                                  false)
+                                       :show-sure?              false
                                        :creating?               false
                                        :create-record           nil
                                        :expanded?               false
