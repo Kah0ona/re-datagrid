@@ -59,10 +59,10 @@
         [:p
          [:button.btn.cancel.btn-lg.btn-default
           {:on-click #(rf/dispatch [:datagrid/show-are-you-sure-popup id false])}
-          (:no-text @options)]
+          (or (:no-text @options) "Nee")]
          [:button.btn.btn-lg.confirm.btn-warning
           {:on-click #(rf/dispatch [:datagrid/delete-record id])}
-          (:yes-text @options)]]]])))
+          (or (:yes-text @options) "Ja")]]]])))
 
 (defn create-button
   [id]
