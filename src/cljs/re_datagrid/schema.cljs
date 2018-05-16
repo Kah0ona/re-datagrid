@@ -61,6 +61,7 @@
    (s/optional-key :delete-are-you-sure-title)   s/Str
    (s/optional-key :yes-text)                    s/Str
    (s/optional-key :no-text)                     s/Str
+   (s/optional-key :no-records-text)                    s/Str
    ;;callback that provides row grained control wether to show a delete button.
    ;;takes a record as input, should return true/false
    (s/optional-key :can-delete-fn)               s/Any
@@ -89,7 +90,7 @@
    (s/optional-key :align)                        s/Any
    (s/optional-key :custom-element-renderer)      s/Any
    (s/optional-key :custom-element-edit-renderer) s/Any
-                                        ;click callback which gets passed in a record that was being clicked
+   ;;click callback which gets passed in a record that was being clicked
    (s/optional-key :custom-element-click)         s/Any
    (s/optional-key :width)                        s/Num
    (s/optional-key :placeholder)                  s/Any
@@ -103,5 +104,4 @@
                                         ; (we have one vector in the vector here,
                                         ; because the function is not multi-arity,
                                         ; then it would need a vector to match for each arity, ie. [[..][..][..]])
-                                                   [[{GridValue GridRecord}]])
-   })
+                                                   [[{GridValue GridRecord}]])})
