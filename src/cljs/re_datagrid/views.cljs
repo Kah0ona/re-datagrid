@@ -555,6 +555,6 @@
                 [:tr
                  [:td.nodata {:style   {:padding-top "20px"}
                               :colSpan (count fields)}
-                  [:i (or (:no-records-text @options) "Geen gegevens gevonden.")]]]]
+                  [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
                ;;else
                [table-data id (:data-subscription options)])]]])))))
