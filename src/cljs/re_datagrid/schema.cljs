@@ -61,7 +61,7 @@
    (s/optional-key :delete-are-you-sure-title)   s/Str
    (s/optional-key :yes-text)                    s/Str
    (s/optional-key :no-text)                     s/Str
-   (s/optional-key :no-records-text)                    s/Str
+   (s/optional-key :no-records-text)                    s/Any
    ;;callback that provides row grained control wether to show a delete button.
    ;;takes a record as input, should return true/false
    (s/optional-key :can-delete-fn)               s/Any
