@@ -91,13 +91,17 @@
 (rf/reg-event-db
  :datagrid/toggle-checkbox
  (fn [db [_ id record]]
-   (let [id-field (get-in db [:datagrid/data  id :options :id-field])
-         pk       (get record id-field)]
+   (let [id-field    (get-in db [:datagrid/data  id :options :id-field])
+         callback-fn (get-in db [:datagrid/data  id :options :on-selection-change])
+         pk          (get record id-field)]
      (update-in db [:datagrid/data  id :selected-records]
                 (fn [o pk']
-                  (if (some #{pk'} o)
-                    (disj o pk')
-                    (conj o pk')))
+                  (let [n' (if (some #{pk'} o)
+                             (disj o pk')
+                             (conj o pk'))]
+                    (when callback-fn
+                      (callback-fn n' record))
+                    n'))
                 pk))))
 
 (rf/reg-event-db
