@@ -39,9 +39,12 @@
     (fn [id record]
       (let [pkey (:id-field @options)]
         [:td.check {:key (str "checkbox_" (get record pkey))}
-         [:input {:type      :checkbox
-                  :checked   (if @record-selected? "checked" nil)
-                  :on-change #(rf/dispatch [:datagrid/toggle-checkbox id record])}]]))))
+         [:div.checkbox
+          [:label
+           [:input {:type      :checkbox
+                    :checked   (if @record-selected? "checked" nil)
+                    :on-change #(rf/dispatch [:datagrid/toggle-checkbox id record])}]
+           [:i.input-helper]]]]))))
 
 (defn are-you-sure-modal
   [id]
