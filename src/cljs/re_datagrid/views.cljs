@@ -202,9 +202,12 @@
         checked?        (rf/subscribe [:datagrid/mass-select-checked? id])]
     (fn
       [id data-sub]
-      [:input {:type      :checkbox
-               :checked   @checked?
-               :on-change #(rf/dispatch [:datagrid/toggle-mass-select id @visible-records])}])))
+      [:div.checkbox
+       [:label
+        [:input {:type      :checkbox
+                 :checked   @checked?
+                 :on-change #(rf/dispatch [:datagrid/toggle-mass-select id @visible-records])}]
+        [:i.input-helper]]])))
 
 (defn table-header
   [id data-sub]

@@ -19,7 +19,7 @@
       (nil? v)    v
       (number? v) v
       (string? v) (clojure.string/lower-case v)
-      :otherwise v)))
+      :otherwise (str v))))
 
 
 (defn sort-records
@@ -32,7 +32,7 @@
           fmt-key (keyword (str (name k) "-formatted"))
           field   (first (filter #(= (:name %) k) fields))
           sort-fn (if (:sort-value-fn field)
-                    #((:sort-value-fn field) (or (get % k) (get % fmt-key)) %)
+                    #((:sort-value-fn field) (or (str (get % k)) (str (get % fmt-key))) %)
                     (partial sensible-sort fmt-key))]
       (->> records
            (sort-by sort-fn)
