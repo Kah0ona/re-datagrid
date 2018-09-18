@@ -547,6 +547,7 @@
              [are-you-sure-modal id])
            [:div.table-responsive
             [:table.table.bootgrid-table
+             {:class (name id)}
              (when-not (:hide-heading options)
                [table-header id data-sub])
 
