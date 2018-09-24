@@ -52,6 +52,8 @@
    (s/optional-key :on-record-click)             s/Any
    (s/optional-key :can-sort)                    s/Bool
    (s/optional-key :header-filters)              s/Bool
+   ;;a subscription that returns true if data is still loading, or false/nil if it doesn't
+   (s/optional-key :loading-subscription) s/Any
    ;; handler to implement reordering.
    ;; NOTE: it's the handler's responsibility to do actual reordering, ie. swap records around!
    ;; TODO: make a macro in the crud handlers that automatically generates this handler

@@ -15,6 +15,7 @@
    :header-filters    true
    :can-sort          true
    :can-reorder       true
+   :loading-subscription [:my-loading]
    :reorder-dispatch  [:reorder]
    :create-dispatch   [:create]
    :update-dispatch   [:update]

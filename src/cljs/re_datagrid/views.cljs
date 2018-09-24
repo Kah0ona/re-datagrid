@@ -519,13 +519,15 @@
    fields  :- [ds/GridField]]
   (let [id              (:grid-id options)
         data-sub        (:data-subscription options)
+        loading-sub     (:loading-subscription options)
         creating?       (rf/subscribe [:datagrid/creating? id])
         show-sure?      (rf/subscribe [:datagrid/show-sure? id])
         ;; we do this aliassing, since we have 'sorted-records' depend on this one
         records         (rf/subscribe [:datagrid/records data-sub])
         current-options (rf/subscribe [:datagrid/options id])
         current-fields  (rf/subscribe [:datagrid/fields id])
-        initialized?    (rf/subscribe [:datagrid/initialized? id])]
+        initialized?    (rf/subscribe [:datagrid/initialized? id])
+        loading?        (rf/subscribe [:datagrid/loading? loading-sub])]
     (fn [options fields]
       (if-not @initialized?
         (do (rf/dispatch [:datagrid/initialize options fields])
@@ -542,7 +544,6 @@
           (when (not= fields @current-fields)
             (rf/dispatch [:datagrid/update-fields id fields]))
           [:div
-
            (when @show-sure?
              [are-you-sure-modal id])
            [:div.table-responsive
@@ -550,18 +551,28 @@
              {:class (name id)}
              (when-not (:hide-heading options)
                [table-header id data-sub])
-
              (when-not (empty?
                         (filter (fn [f]
                                   (not (nil? (:footer-cell f)))) fields))
                [table-footer id fields @records])
+             (cond
+               @loading?
+               [:tbody
+                [:tr
+                 [:td {:col-span (count fields)}
+                  [:div.p-30
+                   {:style {:text-align :center}}
+                   [:div.preloader.pl-xl
+                    [:svg.pl-circular
+                     {:viewBox "25 25 50 50"}
+                     [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]]]]]
 
-             (if (and (empty? @records)
-                      (not @creating?))
+               (and (empty? @records) (not @creating?))
                [:tbody
                 [:tr
                  [:td.nodata {:style   {:padding-top "20px"}
-                              :colSpan (count fields)}
+                              :col-span (count fields)}
                   [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
-               ;;else
+
+               :otherwise
                [table-data id (:data-subscription options)])]]])))))

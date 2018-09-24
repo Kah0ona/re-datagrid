@@ -282,3 +282,17 @@
  :datagrid/header-filter-value
  (fn [db [_ id k]]
    (get-in db [:datagrid/data id :header-filter-values k])))
+
+
+(rf/reg-sub
+ :datagrid/always-false
+ (fn [db _]
+   false))
+
+(rf/reg-sub
+ :datagrid/loading?
+ (fn [[_ sub]]
+   (rf/subscribe (or sub [:datagrid/always-false])))
+ (fn [v]
+   (debug v)
+   v))

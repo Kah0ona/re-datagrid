@@ -9,3 +9,9 @@
  :data
  (fn [db _]
    (:data db)))
+
+
+(rf/reg-sub
+ :my-loading
+ (fn [_]
+   false))
