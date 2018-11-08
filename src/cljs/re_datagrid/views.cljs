@@ -42,7 +42,7 @@
          [:div.checkbox
           [:label
            [:input {:type      :checkbox
-                    :checked   (if @record-selected? "checked" nil)
+                    :checked   (if @record-selected? true false)
                     :on-change #(rf/dispatch [:datagrid/toggle-checkbox id record])}]
            [:i.input-helper]]]]))))
 
@@ -205,7 +205,7 @@
       [:div.checkbox
        [:label
         [:input {:type      :checkbox
-                 :checked   @checked?
+                 :checked   (if @checked? true false)
                  :on-change #(rf/dispatch [:datagrid/toggle-mass-select id @visible-records])}]
         [:i.input-helper]]])))
 
