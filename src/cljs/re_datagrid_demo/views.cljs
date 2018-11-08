@@ -20,7 +20,9 @@
    :reorder-dispatch  [:reorder]
    :create-dispatch   [:create]
    :update-dispatch   [:update]
-   :delete-dispatch   [:delete]})
+   :delete-dispatch   [:delete]
+   :additional-css-class-names "table-striped table-sm"
+   })
 
 (def fields
   [{:name     :id
