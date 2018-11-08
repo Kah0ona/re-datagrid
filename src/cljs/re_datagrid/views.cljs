@@ -466,20 +466,18 @@
         all-records     (rf/subscribe [:datagrid/records data-sub])
         visible-records (rf/subscribe [:datagrid/sorted-records id data-sub])]
     (fn [id data-sub]
-      (let [rows    (when @visible-records
-                      (doall
-                       (map (fn [r]
-                              ^{:key ((:id-field @options) r)}
-                              [table-row id r])
-                            @visible-records)))
+      (let [rows     (doall
+                      (map (fn [r]
+                             ^{:key ((:id-field @options) r)}
+                             [table-row id r])
+                           @visible-records))
             max-rows (:show-max-num-rows @options)]
-        ^{:key :table-data}
         [:tbody {:key "body"}
 
          #_[:tr
           [:td {:colSpan 8}
            [debug-panel @all]]]
-         (cond-> (not (empty? rows))
+         (cond-> rows
            @creating? (conj ^{:key -9}
                             [edit-row id nil])
 
@@ -552,16 +550,13 @@
             [:table.table.bootgrid-table
              {:class (str (name id) " " (:additional-css-class-names options))}
              (when-not (:hide-heading options)
-               ^{:key :table-header}
                [table-header id data-sub])
              (when-not (empty?
                         (filter (fn [f]
                                   (not (nil? (:footer-cell f)))) fields))
-               ^{:key :table-footer}
                [table-footer id fields @records])
              (cond
                @loading?
-               ^{:key :loading}
                [:tbody
                 [:tr
                  [:td {:col-span (count fields)}
@@ -573,7 +568,6 @@
                      [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]]]]]
 
                (and (empty? @records) (not @creating?))
-               ^{:key :no-data}
                [:tbody
                 [:tr
                  [:td.nodata {:style   {:padding-top "20px"}
@@ -581,5 +575,4 @@
                   [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
 
                :otherwise
-               ^{:key :table-data}
                [table-data id (:data-subscription options)])]]])))))
