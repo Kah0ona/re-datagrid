@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"]
                  [reagent "0.8.0-alpha1"]
-                 [re-frame-utils "0.1.0-SNAPSHOT"]
+                 [re-frame-utils "0.1.0"]
                  [com.taoensso/timbre "4.10.0"]
                  [prismatic/schema "1.1.6"]
                  [fipp "0.6.10"] ;;pretty printer cljs
