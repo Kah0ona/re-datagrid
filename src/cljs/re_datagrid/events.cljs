@@ -214,7 +214,12 @@
                     (assoc-in [:datagrid/data id :options :rec-marked-for-deletion] nil))
       :dispatch (conj delete-dispatch record)})))
 
-(rf/reg-event-db
+(rf/reg-event-fx
  :datagrid/header-filter-value
- (fn [db [_ id k v]]
-   (assoc-in db [:datagrid/data id :header-filter-values k] v)))
+ (fn [{db :db} [_ id k v blur?]]
+   (let [extra-dispatch (get-in db [:datagrid/data id :options :header-filter-dispatch])
+         extra-dispatch (when extra-dispatch
+                          (vec (concat extra-dispatch [id k v blur?])))]
+     (cond->
+         {:db (assoc-in db [:datagrid/data id :header-filter-values k] v)}
+       extra-dispatch (assoc :dispatch extra-dispatch)))))

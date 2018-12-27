@@ -62,6 +62,7 @@
    ;; If you want to do extra side-effects, ie. fetch server data, you can do that here.
    ;; It gets passed in field-name (ie. the key being sorted) and the new sort-direction
    (s/optional-key :sort-dispatch)               s/Any
+   (s/optional-key :header-filter-dispatch)      s/Any
    (s/optional-key :hide-heading)                s/Bool
    (s/optional-key :delete-are-you-sure-message) s/Str
    (s/optional-key :delete-are-you-sure-title)   s/Str

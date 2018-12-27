@@ -18,6 +18,7 @@
    :checkbox-select            true
    :loading-subscription       [:my-loading]
    :sort-dispatch              [:sort]
+   :header-filter-dispatch [:header-filter-dispatch]
    :reorder-dispatch           [:reorder]
    :create-dispatch            [:create]
    :update-dispatch            [:update]

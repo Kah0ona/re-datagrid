@@ -80,3 +80,10 @@
  (fn [db [_ field direction]]
    (debug "custom sort effect, sorting: " field " direction " direction)
    db))
+
+
+(rf/reg-event-db
+ :header-filter-dispatch
+ (fn [db [_ id k v blur?]]
+   (debug "custom header-filter-dispatch effect, " id k v blur?)
+   db))

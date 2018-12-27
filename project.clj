@@ -1,9 +1,9 @@
-(defproject re-datagrid "0.1.3"
+(defproject re-datagrid "0.1.4"
   :description "A datagrid component for re-frame apps, with sorting, editing, etc."
   :url "https://github.com/Kah0ona/re-datagrid.git"
   :license {:name "MIT"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.908"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/clojurescript "1.10.439"]
                  [reagent "0.8.0-alpha1"]
                  [re-frame-utils "0.1.0"]
                  [com.taoensso/timbre "4.10.0"]

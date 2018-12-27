@@ -121,10 +121,11 @@
     (fn [id {:keys [name] :as field}]
       [:div.table-header-filter.m-b-10
        [:input.form-control
-        {:value     (or @v "")
+        {:value       (or @v "")
          :placeholder "Filter..."
-         :on-change #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value)])
-         :type      :text}]])))
+         :on-change   #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value)])
+         :on-blur     #(rf/dispatch [:datagrid/header-filter-value id name @v true])
+         :type        :text}]])))
 
 (defmethod table-header-filter :number
   [id {:keys [name] :as field}]
@@ -132,10 +133,11 @@
     (fn [id {:keys [name] :as field}]
       [:div.table-header-filter.m-b-10
        [:input.form-control
-        {:value     (or @v "")
+        {:value       (or @v "")
          :placeholder "Filter..."
-         :on-change #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value )])
-         :type      :number}]])))
+         :on-change   #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value )])
+         :on-blur     #(rf/dispatch [:datagrid/header-filter-value id name @v true])
+         :type        :number}]])))
 
 (defn table-header-cell
   [id {:keys [title align width can-sort hide-header-filter] :as field}]
