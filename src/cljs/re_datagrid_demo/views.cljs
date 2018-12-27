@@ -9,18 +9,19 @@
                                  spy get-env log-env)]))
 
 (def opts
-  {:grid-id           :my-grid
-   :data-subscription [:data]
-   :id-field          :id
-   :header-filters    true
-   :can-sort          true
-   :can-reorder       true
-   :checkbox-select   true
-   :loading-subscription [:my-loading]
-   :reorder-dispatch  [:reorder]
-   :create-dispatch   [:create]
-   :update-dispatch   [:update]
-   :delete-dispatch   [:delete]
+  {:grid-id                    :my-grid
+   :data-subscription          [:data]
+   :id-field                   :id
+   :header-filters             true
+   :can-sort                   true
+   :can-reorder                true
+   :checkbox-select            true
+   :loading-subscription       [:my-loading]
+   :sort-dispatch              [:sort]
+   :reorder-dispatch           [:reorder]
+   :create-dispatch            [:create]
+   :update-dispatch            [:update]
+   :delete-dispatch            [:delete]
    :additional-css-class-names "table-striped table-sm"
    })
 

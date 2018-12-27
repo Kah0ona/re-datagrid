@@ -72,3 +72,11 @@
  :reorder
  (fn [db [_ direction record]]
    (move db direction record)))
+
+
+
+(rf/reg-event-db
+ :sort
+ (fn [db [_ field direction]]
+   (debug "custom sort effect, sorting: " field " direction " direction)
+   db))

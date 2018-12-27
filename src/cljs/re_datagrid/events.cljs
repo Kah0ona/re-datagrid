@@ -62,14 +62,19 @@
 
 
 
-(rf/reg-event-db
+(rf/reg-event-fx
  :datagrid/sort-field
- (fn [db [_ grid-id field-name]]
-   (debug "Sorting" grid-id ", field:" field-name " in direction:"
-          (get-next-sort-direction (get-in db [:datagrid/data  grid-id :sorting :direction])))
-   (-> db
-       (assoc-in [:datagrid/data  grid-id :sorting :key] field-name)
-       (update-in [:datagrid/data  grid-id :sorting :direction] get-next-sort-direction))))
+ (fn [{db :db} [_ grid-id field-name]]
+   (let [nd             (get-next-sort-direction (get-in db [:datagrid/data grid-id :sorting :direction]))
+         extra-dispatch (get-in db [:datagrid/data grid-id :options :sort-dispatch])
+         extra-dispatch (when extra-dispatch
+                          (vec (concat extra-dispatch [field-name nd])))]
+     (debug "Sorting" grid-id ", field:" field-name " in direction:" nd)
+     (cond-> {:db
+              (-> db
+                  (assoc-in [:datagrid/data  grid-id :sorting :key] field-name)
+                  (update-in [:datagrid/data  grid-id :sorting :direction] get-next-sort-direction))}
+       extra-dispatch (assoc :dispatch extra-dispatch)))))
 
 (rf/reg-event-db
  :datagrid/toggle-mass-select
