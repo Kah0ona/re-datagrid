@@ -540,7 +540,8 @@
                {:viewBox "25 25 50 50"}
                [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]])
         ;;else
-        (let []
+        (let [colspan (cond-> (count fields)
+                        (:checkbox-select options) inc)]
           (when (not= options @current-options)
             (rf/dispatch [:datagrid/update-options id options]))
           (when (not= fields @current-fields)
@@ -573,7 +574,7 @@
                [:tbody
                 [:tr
                  [:td.nodata {:style   {:padding-top "20px"}
-                              :col-span (count fields)}
+                              :col-span colspan}
                   [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
 
                :otherwise
