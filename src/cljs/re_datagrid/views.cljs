@@ -155,7 +155,8 @@
             header-filters?  (:header-filters @options)]
         [:th atts
 
-         (if (or can-sort-global? can-sort)
+         (if (and can-sort-global? 
+                  (not= false can-sort))
            [:a.column-header-anchor
 
             [:span.text.m-r-5
