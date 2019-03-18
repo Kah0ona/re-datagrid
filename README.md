@@ -5,7 +5,7 @@
 A re-frame datagrid component that is configurable with fields, etc. It is based/depends on re-frame.
 It has various configuration options, but the main usage is:
 
-```clojurescript
+```clojure
 (use '[re-datagrid.views :refer [datagrid]])
 (def opts
  {:grid-id :my-id
@@ -40,12 +40,12 @@ Also, see the `re-datagrid-demo.views` namespace for example usage.
 Field types are extensible via multi-methods, but the basic one is already pretty flexible:
 
 Basic field:
-```clojurescript
+```clojure
 {:name :my-field :title "Header title"}
 ```
 
 Add a formatter:
-```
+```clojure
 {:name  :my-field
  :title "Header title"
  :formatter (fn [value record]
@@ -71,15 +71,6 @@ lein dev
 Figwheel will automatically push cljs changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3447/figwheel.html](http://localhost:3447/figwheel.html).
-
-### Run tests:
-
-```
-lein clean
-lein doo phantom test once
-```
-
-The above command assumes that you have [phantomjs](https://www.npmjs.com/package/phantomjs) installed. However, please note that [doo](https://github.com/bensu/doo) can be configured to run cljs.test in many other JS environments (chrome, ie, safari, opera, slimer, node, rhino, or nashorn).
 
 ## Production Build
 To compile clojurescript to javascript:
