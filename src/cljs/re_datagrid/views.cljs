@@ -155,7 +155,7 @@
             header-filters?  (:header-filters @options)]
         [:th atts
 
-         (if (and can-sort-global? 
+         (if (and can-sort-global?
                   (not= false can-sort))
            [:a.column-header-anchor
 
@@ -230,14 +230,15 @@
                         {:key "check"}
                         [mass-select id data-sub]]]))]
         [:thead  {:key "head"}
-         [:tr
-          (if (:can-create @options)
-            (concat cells [ ^{:key "cmds"}
-                           [:th.commands
-                            [create-button id]]])
-            cells)]]))))
-
-
+         (when (:extra-header-row @options)
+           (:extra-header-row @options))
+         (when-not (:hide-heading @options)
+           [:tr
+            (if (:can-create @options)
+              (concat cells [ ^{:key "cmds"}
+                             [:th.commands
+                              [create-button id]]])
+              cells)])]))))
 
 (defmulti edit-cell
   (fn [_ {t :type} _]
@@ -553,7 +554,8 @@
            [:div.table-responsive
             [:table.table.bootgrid-table
              {:class (str (name id) " " (:additional-css-class-names options))}
-             (when-not (:hide-heading options)
+             (when-not (and (:hide-heading options)
+                            (not (:extra-header-row options)))
                [table-header id data-sub])
              (when-not (empty?
                         (filter (fn [f]

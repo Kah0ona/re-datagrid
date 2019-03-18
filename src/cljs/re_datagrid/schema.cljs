@@ -64,6 +64,9 @@
    (s/optional-key :sort-dispatch)               s/Any
    (s/optional-key :header-filter-dispatch)      s/Any
    (s/optional-key :hide-heading)                s/Bool
+   ;;a component to use as an extra header row above the default one.
+   ;; if you want to use 'only' this one, use this in combination with :hide-heading
+   (s/optional-key :extra-header-row)            s/Any
    (s/optional-key :delete-are-you-sure-message) s/Str
    (s/optional-key :delete-are-you-sure-title)   s/Str
    (s/optional-key :yes-text)                    s/Str

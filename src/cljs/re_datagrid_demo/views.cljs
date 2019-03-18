@@ -18,13 +18,16 @@
    :checkbox-select            true
    :loading-subscription       [:my-loading]
    :sort-dispatch              [:sort]
-   :header-filter-dispatch [:header-filter-dispatch]
+   :header-filter-dispatch     [:header-filter-dispatch]
    :reorder-dispatch           [:reorder]
+   :extra-header-row           [:tr
+                                [:th
+                                 {:col-span 6}
+                                 "Extra custom header row"]]
    :create-dispatch            [:create]
    :update-dispatch            [:update]
    :delete-dispatch            [:delete]
-   :additional-css-class-names "table-striped table-sm"
-   })
+   :additional-css-class-names "table-striped table-sm"})
 
 (def fields
   [{:name     :id
