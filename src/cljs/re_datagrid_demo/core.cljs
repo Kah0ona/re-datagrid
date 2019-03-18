@@ -1,4 +1,4 @@
-(ns re-datagrid-demo.core
+(ns ^:figwheel-hooks re-datagrid-demo.core
   (:require
    [re-datagrid.config :as config]
    [re-datagrid-demo.views :as my-views]
@@ -17,7 +17,7 @@
     (enable-console-print!)
     (println "dev mode")))
 
-(defn mount-root []
+(defn ^:after-load mount-root []
   (re-frame/clear-subscription-cache!)
   (reagent/render [my-views/main-panel]
                   (.getElementById js/document "app")))
@@ -26,3 +26,8 @@
   (re-frame/dispatch-sync [:initialize-db])
   (dev-setup)
   (mount-root))
+
+(defn -main
+  "Used for figwheel main"
+  [args]
+  (init))
