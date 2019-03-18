@@ -70,7 +70,7 @@ lein dev
 
 Figwheel will automatically push cljs changes to the browser.
 
-Wait a bit, then browse to [http://localhost:3447/figwheel.html](http://localhost:3447/figwheel.html).
+Wait a bit, then browse to [http://localhost:3447](http://localhost:3447).
 
 ## Production Build
 To compile clojurescript to javascript:
