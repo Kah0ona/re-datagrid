@@ -14,6 +14,7 @@
    :id-field                   :id
    :header-filters             true
    :can-sort                   true
+   :can-edit                   true
    :can-reorder                true
    :checkbox-select            true
    :loading-subscription       [:my-loading]
