@@ -33,6 +33,12 @@
            r)))
 
 (rf/reg-event-db
+ :start-edit
+ (fn [db [_ r]]
+   (debug "custom start-edit-dispatch effect, record: " r)
+   db))
+
+(rf/reg-event-db
  :update
  (fn [db [_ r]]
    (update db
