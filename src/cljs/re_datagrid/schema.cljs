@@ -84,6 +84,7 @@
    ;;callback fn that gets set of all selected records as argumentlist
    :data-subscription                            s/Any
    (s/optional-key :create-dispatch)             s/Any
+   (s/optional-key :start-edit-dispatch)         s/Any
    (s/optional-key :update-dispatch)             s/Any
    (s/optional-key :delete-dispatch)             s/Any
    (s/optional-key :additional-css-class-names)  s/Str ; additional css-class-names to be applied to the <table> tag.

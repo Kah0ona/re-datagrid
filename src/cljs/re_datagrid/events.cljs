@@ -169,10 +169,14 @@
 
 
 
-(rf/reg-event-db
+(rf/reg-event-fx
  :datagrid/start-edit
- (fn [db [_ id pk record]]
-   (assoc-in db [:datagrid/data id :edit-rows pk] record)))
+ (fn [{db :db} [_ id pk record]]
+   (let [start-edit-dispatch (get-in db [:datagrid/data id :options :start-edit-dispatch])]
+     (merge
+      {:db (assoc-in db [:datagrid/data id :edit-rows pk] record)}
+      (when start-edit-dispatch
+        {:dispatch (conj start-edit-dispatch record)})))))
 
 
 (rf/reg-event-fx

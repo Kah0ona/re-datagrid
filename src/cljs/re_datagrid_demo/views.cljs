@@ -26,6 +26,7 @@
                                  {:col-span 6}
                                  "Extra custom header row"]]
    :create-dispatch            [:create]
+   :start-edit-dispatch        [:start-edit]
    :update-dispatch            [:update]
    :delete-dispatch            [:delete]
    :additional-css-class-names "table-striped table-sm"})
