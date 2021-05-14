@@ -581,4 +581,6 @@
                   [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
 
                :otherwise
-               [table-data id (:data-subscription options)])]]])))))
+               [table-data id (:data-subscription options)])]
+            (when (:progressive-loading options)
+              [:div.re-datagrid-read-more-marker])]])))))

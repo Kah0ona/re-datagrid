@@ -27,12 +27,22 @@
     merged))
 
 
+(defn register-scroll-events
+  [id]
+  ;;whenever there 's a div re-datagrid-read-more-marker IN the viewport
+  ;;dispatch the expand max-num-rows variable
+
+
+  )
+
 (rf/reg-event-db
  :datagrid/initialize
  (fn [db [_ opts fields]]
    (assert (:data-subscription opts)
            "No subscription for records. Please set a :data-subscription re-frame subscribe pattern on init-time.")
    (let [id (:grid-id opts)]
+     (when (:progressive-loading opts)
+       (register-scroll-events id))
      (assoc-in db [:datagrid/data id] {:options                 (extend-options-with-defaults opts)
                                        :fields                  fields
                                        :selected-records        #{}
@@ -94,8 +104,8 @@
 (rf/reg-event-db
  :datagrid/toggle-checkbox
  (fn [db [_ id record]]
-   (let [id-field    (get-in db [:datagrid/data  id :options :id-field])
-         callback-fn (get-in db [:datagrid/data  id :options :on-selection-change])
+   (let [id-field    (get-in db [:datagrid/data id :options :id-field])
+         callback-fn (get-in db [:datagrid/data id :options :on-selection-change])
          pk          (get record id-field)]
      (update-in db [:datagrid/data  id :selected-records]
                 (fn [o pk']

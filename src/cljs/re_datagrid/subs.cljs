@@ -97,18 +97,24 @@
        (clojure.string/lower-case q)))))
 
 (defn field-matches?
-  [record acc [field query]]
-  (let [v (get record (-> field name (str "-formatted") keyword))]
-    (and acc (is-match? v query))))
+  [record fields acc [field query]]
+  (let [v (get record (-> field name (str "-formatted") keyword))
+        field (->> fields
+                   (filter (comp #{field} :name))
+                   first)]
+    (and acc
+         (if (:custom-filter-fn field)
+           ((:custom-filter-fn field) v query record)
+           (is-match? v query)))))
 
 (defn record-matches-filters?
-  [filters r]
-  (reduce (partial field-matches? r)
+  [filters fields r]
+  (reduce (partial field-matches? r fields)
           true filters))
 
 (defn filter-by-header-filters
-  [records filters]
-  (filter (partial record-matches-filters? filters)
+  [records filters fields]
+  (filter (partial record-matches-filters? filters fields)
           records))
 
 (defmulti default-formatter (fn [{t :type :as field}]
@@ -178,7 +184,7 @@
               (sort-records formatted-records fields (:key sorting) (:direction sorting))
               formatted-records)
          rs (if (:header-filters options)
-              (filter-by-header-filters rs filters)
+              (filter-by-header-filters rs filters fields)
               rs)
          n (:show-max-num-rows options)]
      (if (and n (not expanded?))

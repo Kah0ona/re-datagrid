@@ -10,9 +10,10 @@
 
 (def opts
   {:grid-id                    :my-grid
-   :data-subscription          [:data]
+   :data-subscription          [:large-data]
    :id-field                   :id
    :header-filters             true
+   :progressive-loading        true
    :can-sort                   true
    :can-edit                   true
    :can-reorder                true
@@ -38,6 +39,10 @@
     :type     :number}
    {:name      :firstname
     :can-sort  true
+    :custom-filter-fn (fn [v q r]
+                        ;; TODO add custom filter logic
+                        true
+                        )
     :formatter (fn [v r]
                  [:b v])
     :title     "Firstname"}
@@ -53,7 +58,9 @@
    {:name  :male
     :type  :yesno
     :title "Male?"}])
-
+;;max_allowed_packet
+;22.324.930
+;16.777.216
 (defn main-panel
   []
   [:div.container

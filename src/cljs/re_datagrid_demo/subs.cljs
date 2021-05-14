@@ -10,6 +10,11 @@
  (fn [db _]
    (:data db)))
 
+(rf/reg-sub
+ :large-data
+ (fn [db _]
+   (take 100 (:large-data db))))
+
 
 (rf/reg-sub
  :my-loading

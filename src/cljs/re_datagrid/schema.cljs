@@ -42,6 +42,8 @@
    (s/optional-key :show-max-num-rows)           s/Int
    (s/optional-key :can-edit)                    s/Bool
    (s/optional-key :can-edit-fn)                 s/Any
+   ;;loads more data if available after user scrolls to bottom or clicks the read more button
+   (s/optional-key :progressive-loading)         s/Bool
    (s/optional-key :can-create)                  s/Bool
    (s/optional-key :can-delete)                  s/Bool
    (s/optional-key :default-sort-key)            s/Keyword
@@ -110,6 +112,7 @@
    (s/optional-key :hide-header-filter)           s/Bool
    (s/optional-key :type)                         s/Any
    (s/optional-key :can-sort)                     s/Any
+   (s/optional-key :custom-filter-fn) s/Any ;; if you want custom filter logic, implement this callback, which looks like (fn [formatted-value-of-record query record])
    (s/optional-key :sort-value-fn)                s/Any ; uses this as the sort-by argument, should be a fn like: (fn [val rec] ...)
    (s/optional-key :formatter)                    (s/make-fn-schema ; should be a function
                                                    s/Str ; should return a string
