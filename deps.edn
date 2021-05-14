@@ -1,0 +1,17 @@
+{:paths   ["src" "resources"]
+ :deps
+ {
+  com.bhauman/figwheel-main     {:mvn/version "0.2.13"}
+  org.clojure/clojure           {:mvn/version "1.10.0"},
+  reagent/reagent               {:mvn/version "0.8.1"},
+  fipp/fipp                     {:mvn/version "0.6.10"},
+  org.clojure/clojurescript     {:mvn/version "1.10.520"},
+  com.taoensso/timbre           {:mvn/version "4.10.0"},
+  prismatic/schema              {:mvn/version "1.1.6"},
+  com.andrewmcveigh/cljs-time   {:mvn/version "0.5.1"},
+  re-frame/re-frame             {:mvn/version "0.10.1"},
+  re-frame-utils/re-frame-utils {:mvn/version "0.1.0"}}
+ ;;usage: clj -A:release --patch # patch, minor, major
+ :aliases {:release
+           {:extra-deps
+            {applied-science/deps-library {:mvn/version "0.4.0"}}}}}
