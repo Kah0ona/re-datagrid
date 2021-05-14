@@ -1,7 +1,6 @@
 {:paths   ["src" "resources"]
  :deps
- {
-  com.bhauman/figwheel-main     {:mvn/version "0.2.13"}
+ {com.bhauman/figwheel-main     {:mvn/version "0.2.13"}
   org.clojure/clojure           {:mvn/version "1.10.0"},
   reagent/reagent               {:mvn/version "0.8.1"},
   fipp/fipp                     {:mvn/version "0.6.10"},
@@ -14,4 +13,5 @@
  ;;usage: clj -A:release --patch # patch, minor, major
  :aliases {:release
            {:extra-deps
-            {applied-science/deps-library {:mvn/version "0.4.0"}}}}}
+            {applied-science/deps-library {:mvn/version "0.4.0"}}
+            :main-opts ["-m" "applied-science.deps-library"]}}}
