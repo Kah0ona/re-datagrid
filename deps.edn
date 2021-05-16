@@ -1,4 +1,4 @@
-{:paths   ["src" "resources"]
+{:paths ["src" "resources"]
  :deps
  {com.bhauman/figwheel-main     {:mvn/version "0.2.13"}
   org.clojure/clojure           {:mvn/version "1.10.0"},
@@ -11,7 +11,9 @@
   re-frame/re-frame             {:mvn/version "0.10.1"},
   re-frame-utils/re-frame-utils {:mvn/version "0.1.0"}}
  ;;usage: clj -A:release --patch # patch, minor, major
- :aliases {:release
-           {:extra-deps
-            {applied-science/deps-library {:mvn/version "0.4.0"}}
-            :main-opts ["-m" "applied-science.deps-library"]}}}
+ :aliases
+ {:release {:extra-deps {applied-science/deps-library {:mvn/version "0.4.0"}}
+            :main-opts  ["-m" "applied-science.deps-library"
+
+
+                         ]}}}
