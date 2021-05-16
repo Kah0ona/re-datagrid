@@ -11,9 +11,7 @@
   re-frame/re-frame             {:mvn/version "0.10.1"},
   re-frame-utils/re-frame-utils {:mvn/version "0.1.0"}}
  ;;usage: clj -A:release --patch # patch, minor, major
+ ;;(also deploys to clojars)
  :aliases
  {:release {:extra-deps {applied-science/deps-library {:mvn/version "0.4.0"}}
-            :main-opts  ["-m" "applied-science.deps-library"
-
-
-                         ]}}}
+            :main-opts  ["-m" "applied-science.deps-library"]}}}
