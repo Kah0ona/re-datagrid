@@ -111,7 +111,8 @@
    (s/optional-key :placeholder)                  s/Any
    (s/optional-key :hide-header-filter)           s/Bool
    (s/optional-key :type)                         s/Any
-   (s/optional-key :custom-header-filter)         s/Bool
+   ;; fn that takes grid id, and field
+   (s/optional-key :custom-header-filter)         s/Any
    (s/optional-key :can-sort)                     s/Any
    (s/optional-key :custom-filter-fn) s/Any ;; if you want custom filter logic, implement this callback, which looks like (fn [formatted-value-of-record query record])
    (s/optional-key :sort-value-fn)                s/Any ; uses this as the sort-by argument, should be a fn like: (fn [val rec] ...)
