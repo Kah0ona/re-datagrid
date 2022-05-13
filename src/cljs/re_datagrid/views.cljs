@@ -23,7 +23,6 @@
            (clojure.string/ends-with? (name k) "-formatted" ))
          r)))
 
-
 (def dutch-formatter (fmt/formatter "dd-MM-yyyy HH:mm"))
 (def dutch-formatter-date (fmt/formatter "dd-MM-yyyy"))
 
@@ -140,7 +139,7 @@
          :type        :number}]])))
 
 (defn table-header-cell
-  [id {:keys [title align width can-sort hide-header-filter] :as field}]
+  [id {:keys [title align width can-sort hide-header-filter custom-header-filter] :as field}]
   (let [align   (if-not align :text-left align)
         atts    (cond-> {:className align
                          :key (name (:name field))}
@@ -193,8 +192,14 @@
 
          (when (and header-filters?
                     (or (nil? hide-header-filter)
-                        (not hide-header-filter)))
+                        (not hide-header-filter))
+                    (not custom-header-filter))
            [table-header-filter id field])
+         (when (and header-filters?
+                    (or (nil? hide-header-filter)
+                        (not hide-header-filter))
+                    custom-header-filter)
+           (custom-header-filter id field))
 
          (when (and header-filters? hide-header-filter)
            [:div.m-b-10 {:style {:height "35px"}} " "])]))))
