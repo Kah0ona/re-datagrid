@@ -18,6 +18,7 @@
    :can-edit                   true
    :can-reorder                true
    :checkbox-select            true
+   :show-max-num-rows          3
    :loading-subscription       [:my-loading]
    :sort-dispatch              [:sort]
    :header-filter-dispatch     [:header-filter-dispatch]
