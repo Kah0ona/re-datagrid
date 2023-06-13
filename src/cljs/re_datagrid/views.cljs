@@ -468,7 +468,7 @@
 
 (defn table-data
   [id data-sub]
-  (let [expanded?       (rf/subscribe [:datagrid/expanded? id])
+  (let [
         options         (rf/subscribe [:datagrid/options id])
         fields          (rf/subscribe [:datagrid/fields id])
         creating?       (rf/subscribe [:datagrid/creating? id])
@@ -488,25 +488,7 @@
            [debug-panel @all]]]
          (cond-> rows
            @creating? (conj ^{:key -9}
-                            [edit-row id nil])
-
-           (and max-rows
-                (not @expanded?)
-                (> (count @all-records) max-rows))
-           (concat [^{:key -2}
-                    [:tr
-                     [:td
-                      [:button.btn.btn-primary
-                       {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon meer"]]]])
-
-           (and max-rows
-                @expanded?
-                (> (count @all-records) max-rows))
-           (concat [^{:key -3}
-                    [:tr
-                     [:td
-                      [:button.btn.btn-primary
-                       {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon minder"]]]]))]))))
+                            [edit-row id nil]))]))))
 
 (defn table-footer
   [id fields records]
@@ -535,6 +517,7 @@
         records         (rf/subscribe [:datagrid/records data-sub])
         current-options (rf/subscribe [:datagrid/options id])
         current-fields  (rf/subscribe [:datagrid/fields id])
+        expanded?       (rf/subscribe [:datagrid/expanded? id])
         initialized?    (rf/subscribe [:datagrid/initialized? id])
         loading?        (rf/subscribe [:datagrid/loading? loading-sub])]
     (fn [options fields]
@@ -588,4 +571,19 @@
                :otherwise
                [table-data id (:data-subscription options)])]
             (when (:progressive-loading options)
-              [:div.re-datagrid-read-more-marker])]])))))
+              [:div.re-datagrid-read-more-marker])
+
+            (when (and (:show-max-num-rows options)
+                       (not @expanded?)
+                       (> (count @records) (:show-max-num-rows options)))
+              [:div.re-datagrid-button-container
+               [:button.btn.btn-primary.btn-read-more
+                {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon meer"]])
+
+            (when (and
+                   (:show-max-num-rows options)
+                   @expanded?
+                   (> (count @records) (:show-max-num-rows options)))
+              [:div.re-datagrid-button-container
+               [:button.btn.btn-primary.btn-read-less
+                {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon minder"]])]])))))
