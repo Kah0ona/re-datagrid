@@ -48,6 +48,9 @@
    (s/optional-key :can-delete)                  s/Bool
    (s/optional-key :default-sort-key)            s/Keyword
    (s/optional-key :default-sort-direction)      s/Keyword
+   ;; fn that partitions the rows. It will add a CSS class on the start of each partition,
+   ;; with as class name the return value of partition-fn
+   (s/optional-key :partition-fn)                s/Any
    (s/optional-key :can-reorder)                 s/Bool
    (s/optional-key :can-reorder-fn-up)           s/Any
    (s/optional-key :can-reorder-fn-down)         s/Any

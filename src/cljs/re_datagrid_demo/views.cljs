@@ -8,6 +8,10 @@
                                  logf tracef debugf infof warnf errorf fatalf reportf
                                  spy get-env log-env)]))
 
+(defn my-partitioner
+  [row-idx row all-rows]
+  (str "every-" (mod row-idx 3)))
+
 (def opts
   {:grid-id                    :my-grid
    :data-subscription          [:large-data]
@@ -18,6 +22,7 @@
    :can-edit                   true
    :can-reorder                true
    :checkbox-select            true
+   :partition-fn my-partitioner
    :show-max-num-rows          3
    :loading-subscription       [:my-loading]
    :sort-dispatch              [:sort]
