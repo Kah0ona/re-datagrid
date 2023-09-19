@@ -417,10 +417,10 @@
          [delete-cell-button id record])])))
 
 (defn non-edit-row
-  [id record]
+  [id record row-class]
   (let [options (rf/subscribe [:datagrid/options id])
         fields  (rf/subscribe [:datagrid/fields id])]
-    (fn [id record]
+    (fn [id record row-class]
       (let [pk (get record (:id-field @options))
             k  (if (or (= "" pk) (nil? pk))
                  "editing"
@@ -435,12 +435,13 @@
                          classNames)
             atts       (cond-> {:key k :className classNames}
                          ;;(:show-max-num-rows @options) (assoc :on-click (:expand-handler @options)))
+                         row-class (update :class (fn [c]
+                                                    (str c " " row-class)))
                          false (assoc :on-click (:expand-handler @options)))
 
             atts (if (:on-record-click @options)
                    (assoc atts :on-click #((:on-record-click @options) record @fields @options))
                    atts)
-
             cells (cond->> (doall
                             (map (fn [f]
                                    ^{:key (:name f)}
@@ -455,16 +456,44 @@
                     [command-td id @options record]]))]))))
 
 (defn table-row
-  [id record]
+  [id record row-class]
   (let [options  (rf/subscribe [:datagrid/options id])
         editing? (rf/subscribe [:datagrid/editing-record? id record])]
-    (fn [id record]
+    (fn [id record row-class]
       (if @editing?
         ^{:key ((:id-field @options) record)}
-        [edit-row id (get record (:id-field @options))]
+        [edit-row id (get record (:id-field @options)) row-class]
 
         ^{:key ((:id-field @options) record)}
-        [non-edit-row id record]))))
+        [non-edit-row id record row-class]))))
+
+(defn build-partition-map
+  [rs partition-fn]
+  (->> rs
+       (partition-by partition-fn)
+       (reduce
+        (fn [[prev-idx acc] partition]
+          (let [n (count partition)
+                v (partition-fn (first partition))
+                ]
+            [(+ prev-idx n) (assoc acc prev-idx v)]))
+        [0 {}])
+       last))
+
+(comment
+
+  (build-partition-map
+   [{:a 1}
+    {:a 1}
+    {:a 1}
+    {:a :x}
+    {:a :x}
+    {:a 2}
+    {:a 2}]
+   :a)
+;; => {0 1, 3 :x, 5 2}
+
+  )
 
 (defn table-data
   [id data-sub]
@@ -475,20 +504,26 @@
         all-records     (rf/subscribe [:datagrid/records data-sub])
         visible-records (rf/subscribe [:datagrid/sorted-records id data-sub])]
     (fn [id data-sub]
-      (let [rows     (doall
-                      (map (fn [r]
-                             ^{:key ((:id-field @options) r)}
-                             [table-row id r])
-                           @visible-records))
-            max-rows (:show-max-num-rows @options)]
+      (let [partition-fn (:partition-fn @options)
+            rs           @visible-records
+            ;;row-idx -> result val, where only the first row of partition returns something
+            partition-map (when partition-fn
+                            (build-partition-map rs partition-fn))
+            rows         (doall
+                          (map-indexed (fn [i r]
+                                         (let [partition-value (get partition-map i)]
+                                           ^{:key ((:id-field @options) r)}
+                                           [table-row id r partition-value]))
+                                       rs))
+            max-rows     (:show-max-num-rows @options)]
         [:tbody {:key "body"}
-
-         #_[:tr
-          [:td {:colSpan 8}
-           [debug-panel @all]]]
          (cond-> rows
            @creating? (conj ^{:key -9}
                             [edit-row id nil]))]))))
+
+
+
+
 
 (defn table-footer
   [id fields records]
