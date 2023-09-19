@@ -433,7 +433,7 @@
             classNames (if (:show-max-num-rows @options)
                          (str classNames " " "expandable")
                          classNames)
-            atts       (cond-> {:key k :className classNames}
+            atts       (cond-> {:key k :class classNames}
                          ;;(:show-max-num-rows @options) (assoc :on-click (:expand-handler @options)))
                          row-class (update :class (fn [c]
                                                     (str c " " row-class)))
