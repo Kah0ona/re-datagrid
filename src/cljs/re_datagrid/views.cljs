@@ -240,27 +240,27 @@
       (let [cells (mapv (fn [f]
                           ^{:key (:name f)}
                           [table-header-cell id f]) @fields)
-            cells
-            (cond->> cells
-              (:checkbox-select @options)
-              (cons ^{:key "check"}
-                    [:th.check
-                     {:key "check"}
-                     [mass-select id data-sub]]))
             cells (cond->> cells
-                    true vec
-                    (:can-delete @options)
-                    (conj [^{:key "commands"}
-                          [:th.commands ""]]))]
+                    (:checkbox-select @options)
+                    (concat [^{:key "check"}
+                             [:th.check
+                              {:key "check"}
+                              [mass-select id data-sub]]]))]
         [:thead  {:key "head"}
          (when (:extra-header-row @options)
            (:extra-header-row @options))
          (when-not (:hide-heading @options)
            [:tr
-            (if (:can-create @options)
+            (cond
+              (:can-create @options)
               (concat cells [ ^{:key "cmds"}
                              [:th.commands
                               [create-button id]]])
+              (:can-delete @options)
+              (concat cells [ ^{:key "cmds2"}
+                             [:th.commands ]])
+              :else
+
               cells)])]))))
 
 (defmulti edit-cell

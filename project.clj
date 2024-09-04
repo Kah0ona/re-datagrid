@@ -1,4 +1,4 @@
-(defproject re-datagrid "0.2.10"
+(defproject re-datagrid "0.2.11"
   :description "A datagrid component for re-frame apps, with sorting, editing, etc."
   :url "https://github.com/Kah0ona/re-datagrid.git"
   :license {:name "MIT"}
