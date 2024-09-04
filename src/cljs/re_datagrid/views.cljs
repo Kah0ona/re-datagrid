@@ -12,8 +12,21 @@
               [taoensso.timbre :as timbre
                :refer-macros (log  trace  debug  info  warn  error  fatal  report
                                   logf tracef debugf infof warnf errorf fatalf reportf
-                                  spy get-env log-env)]))
+                                  spy get-env log-env)])
+    (:import
+     (goog.async Debouncer)))
 
+(defn debounced
+  "Returns a function that applies args to function 'f' with debounce 'interval' milliseconds.
+  Usefull for dispatching events: `((debounced rf/dispatch) [:dispatch/event])`"
+  ([] (debounced rf/dispatch 500))
+  ([f] (debounced f 500))
+  ([f interval]
+   (let [f          (if (ifn? f) f rf/dispatch)
+         interval   (if (pos-int? interval) interval 500)
+         debouncer  (Debouncer. f interval)]
+     (fn debounced* [& args]
+       (.apply (.-fire debouncer) debouncer (to-array args))))))
 
 (defn clean-formatted-keys
   [r]
@@ -224,16 +237,21 @@
         options          (rf/subscribe [:datagrid/options id])
         selected-records (rf/subscribe [:datagrid/selected-record-pks id data-sub])]
     (fn [id data-sub]
-      (let [cells (map (fn [f]
-                         ^{:key (:name f)}
-                         [table-header-cell id f]) @fields)
+      (let [cells (mapv (fn [f]
+                          ^{:key (:name f)}
+                          [table-header-cell id f]) @fields)
             cells
             (cond->> cells
               (:checkbox-select @options)
-              (concat [^{:key "check"}
-                       [:th.check
-                        {:key "check"}
-                        [mass-select id data-sub]]]))]
+              (cons ^{:key "check"}
+                    [:th.check
+                     {:key "check"}
+                     [mass-select id data-sub]]))
+            cells (cond->> cells
+                    true vec
+                    (:can-delete @options)
+                    (conj [^{:key "commands"}
+                          [:th.commands ""]]))]
         [:thead  {:key "head"}
          (when (:extra-header-row @options)
            (:extra-header-row @options))
