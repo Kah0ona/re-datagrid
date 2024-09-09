@@ -80,6 +80,13 @@
  (fn [db [_ id]]
    (get-in db [:datagrid/data id :sorting])))
 
+(rf/reg-sub
+ :datagrid/header-filter-expanded?
+ (fn [db [_ id]]
+   (get-in db [:datagrid/data id :header-filter-expanded?])))
+
+
+
 (defn is-match?
   [s q]
   (let [s (if (string? s) s (str s))]

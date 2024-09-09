@@ -52,6 +52,7 @@
                                        :create-record           nil
                                        :expanded?               false
                                        :mass-select-check       false
+                                       :header-filter-expanded? false
                                        :rec-marked-for-deletion nil
                                        :header-filter-values    {}
                                        :edit-rows               {} ;; map of pk -> rec
@@ -70,6 +71,14 @@
  (fn [db [_ grid-id o]]
    (assoc-in db [:datagrid/data grid-id :fields] o)))
 
+
+(rf/reg-event-db
+ :datagrid/header-filter-expanded?
+ (fn [db [_ id expanded?]]
+   (if expanded?
+     (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?)
+     ;;else toggle
+     (update-in db [:datagrid/data id :header-filter-expanded?] not))))
 
 
 (rf/reg-event-fx

@@ -20,6 +20,7 @@
    :progressive-loading        true
    :can-sort                   true
    :can-edit                   true
+   :can-delete true
    :can-reorder                true
    :checkbox-select            true
    :partition-fn my-partitioner

@@ -158,6 +158,7 @@
                          :key (name (:name field))}
                   width
                   (assoc :style {:width width}))
+        header-filter-expanded? (rf/subscribe [:datagrid/header-filter-expanded? id])
         sorting (rf/subscribe [:datagrid/sorting id])
         options (rf/subscribe [:datagrid/options id])]
     (fn [id {:keys [title align width can-sort] :as field}]
@@ -204,11 +205,13 @@
                            :height  "5px"}}])])
 
          (when (and header-filters?
+                    @header-filter-expanded?
                     (or (nil? hide-header-filter)
                         (not hide-header-filter))
                     (not custom-header-filter))
            [table-header-filter id field])
          (when (and header-filters?
+                    @header-filter-expanded?
                     (or (nil? hide-header-filter)
                         (not hide-header-filter))
                     custom-header-filter)
@@ -229,6 +232,12 @@
                  :checked   (if @checked? true false)
                  :on-change #(rf/dispatch [:datagrid/toggle-mass-select id @visible-records])}]
         [:i.input-helper]]])))
+
+(defn header-filter-toggle
+  [id]
+  [:button.btn.btn-xs.btn-default.waves-effect.waves-circle.waves-float
+   {:on-click #(rf/dispatch [:datagrid/header-filter-expanded? id])}
+   [:i.zmdi.zmdi-filter-list]])
 
 (defn table-header
   [id data-sub]
@@ -255,12 +264,18 @@
               (:can-create @options)
               (concat cells [ ^{:key "cmds"}
                              [:th.commands
-                              [create-button id]]])
+                              [:div.commands-inner
+                               [create-button id]
+                               (when (:header-filters @options)
+                                 [header-filter-toggle id])]]])
+
               (:can-delete @options)
               (concat cells [ ^{:key "cmds2"}
-                             [:th.commands ]])
+                             [:th.commands
+                              [:div.commands-inner
+                               (when (:header-filters @options)
+                                 [header-filter-toggle id])]]])
               :else
-
               cells)])]))))
 
 (defmulti edit-cell
@@ -406,33 +421,34 @@
           :as   options}
          record]
       [:td.commands
-       (when
-           (and can-edit
-                (or
-                 (nil? can-edit-fn)
-                 (and
-                  (not (nil? can-edit-fn))
-                  (can-edit-fn record))))
-         [edit-cell-button id (get record id-field) record])
+       [:div.commands-inner
+        (when
+            (and can-edit
+                 (or
+                  (nil? can-edit-fn)
+                  (and
+                   (not (nil? can-edit-fn))
+                   (can-edit-fn record))))
+          [edit-cell-button id (get record id-field) record])
 
-       (when (and can-reorder
-                  (or (nil? can-reorder-fn-up)
-                      (can-reorder-fn-up record @sorted-records)))
-         [reorder-cell-button-up #(rf/dispatch [:datagrid/reorder id :up (clean-formatted-keys record)])])
+        (when (and can-reorder
+                   (or (nil? can-reorder-fn-up)
+                       (can-reorder-fn-up record @sorted-records)))
+          [reorder-cell-button-up #(rf/dispatch [:datagrid/reorder id :up (clean-formatted-keys record)])])
 
-       (when (and can-reorder
-                  (or (nil? can-reorder-fn-down)
-                      (can-reorder-fn-down record @sorted-records)))
-         [reorder-cell-button-down #(rf/dispatch [:datagrid/reorder id :down (clean-formatted-keys record)])])
+        (when (and can-reorder
+                   (or (nil? can-reorder-fn-down)
+                       (can-reorder-fn-down record @sorted-records)))
+          [reorder-cell-button-down #(rf/dispatch [:datagrid/reorder id :down (clean-formatted-keys record)])])
 
-       (when
-           (and can-delete
-                (or
-                 (nil? can-delete-fn)
-                 (and
-                  (not (nil? can-delete-fn))
-                  (can-delete-fn record))))
-         [delete-cell-button id record])])))
+        (when
+            (and can-delete
+                 (or
+                  (nil? can-delete-fn)
+                  (and
+                   (not (nil? can-delete-fn))
+                   (can-delete-fn record))))
+          [delete-cell-button id record])]])))
 
 (defn non-edit-row
   [id record row-class]
