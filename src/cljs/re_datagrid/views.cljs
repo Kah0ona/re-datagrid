@@ -249,7 +249,7 @@
         options          (rf/subscribe [:datagrid/options id])
         selected-records (rf/subscribe [:datagrid/selected-record-pks id data-sub])]
     (fn [id data-sub]
-      (let [cells (mapv (fn [f]
+      (let [cells (map (fn [f]
                           ^{:key (:name f)}
                           [table-header-cell id f]) @fields)
             cells (cond->> cells
@@ -258,6 +258,7 @@
                              [:th.check
                               {:key "check"}
                               [mass-select id data-sub]]]))]
+        (debug cells)
         [:thead  {:key "head"}
          (when (:extra-header-row @options)
            (:extra-header-row @options))
