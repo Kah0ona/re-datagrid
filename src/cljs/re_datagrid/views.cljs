@@ -153,18 +153,19 @@
 
 (defn table-header-cell
   [id {:keys [title align width can-sort hide-header-filter custom-header-filter] :as field}]
-  (let [align   (if-not align :text-left align)
-        atts    (cond-> {:className align
-                         :key (name (:name field))}
-                  width
-                  (assoc :style {:width width}))
+  (let [align                   (if-not align :text-left align)
+        atts                    (cond-> {:className align
+                                         :key (name (:name field))}
+                                  width
+                                  (assoc :style {:width width}))
         header-filter-expanded? (rf/subscribe [:datagrid/header-filter-expanded? id])
-        sorting (rf/subscribe [:datagrid/sorting id])
-        options (rf/subscribe [:datagrid/options id])]
+        sorting                 (rf/subscribe [:datagrid/sorting id])
+        options                 (rf/subscribe [:datagrid/options id])]
     (fn [id {:keys [title align width can-sort] :as field}]
       (let [sort-by-key      (:key @sorting)
             sort-direction   (:direction @sorting)
             can-sort-global? (:can-sort @options)
+            header-filter-expanded? @header-filter-expanded?
             header-filters?  (:header-filters @options)]
         [:th atts
 
@@ -205,19 +206,21 @@
                            :height  "5px"}}])])
 
          (when (and header-filters?
-                    @header-filter-expanded?
+                    header-filter-expanded?
                     (or (nil? hide-header-filter)
                         (not hide-header-filter))
                     (not custom-header-filter))
            [table-header-filter id field])
          (when (and header-filters?
-                    @header-filter-expanded?
+                    header-filter-expanded?
                     (or (nil? hide-header-filter)
                         (not hide-header-filter))
                     custom-header-filter)
            (custom-header-filter id field))
 
-         (when (and header-filters? hide-header-filter)
+         (when (and header-filters?
+                    header-filter-expanded?
+                    hide-header-filter)
            [:div.m-b-10 {:style {:height "35px"}} " "])]))))
 
 (defn mass-select
@@ -269,7 +272,8 @@
                                (when (:header-filters @options)
                                  [header-filter-toggle id])]]])
 
-              (:can-delete @options)
+              (or (:header-filters @options)
+                  (:can-delete @options))
               (concat cells [ ^{:key "cmds2"}
                              [:th.commands
                               [:div.commands-inner
