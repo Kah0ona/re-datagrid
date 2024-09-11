@@ -258,7 +258,6 @@
                              [:th.check
                               {:key "check"}
                               [mass-select id data-sub]]]))]
-        (debug cells)
         [:thead  {:key "head"}
          (when (:extra-header-row @options)
            (:extra-header-row @options))
