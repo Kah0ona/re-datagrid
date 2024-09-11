@@ -627,7 +627,7 @@
                @loading?
                [:tbody
                 [:tr
-                 [:td {:col-span (count fields)}
+                 [:td {:col-span (+ (count fields) 2)}
                   [:div.p-30
                    {:style {:text-align :center}}
                    [:div.preloader.pl-xl
