@@ -63,18 +63,18 @@ cider-jack-in-clj&cljs
 ```
 When the prompt comes, type `dev`.
 
-From leiningen:
+From Tools CLI:
 ```
-lein dev
+clojure -m figwheel.main -b dev -r
 ```
 
 Figwheel will automatically push cljs changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3447/figwheel.html](http://localhost:3447/figwheel.html).
 
-## Production Build
-To compile clojurescript to javascript:
+## Release a new version
+To release a new version:
 
 ```
-lein build
+clojure -A:release --patch # patch, minor, major
 ```
