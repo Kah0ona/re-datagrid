@@ -37,7 +37,7 @@
                    [com.bhauman/figwheel-main "0.2.0"]
                    [com.bhauman/rebel-readline-cljs "0.1.4"]]
 
-    :plugins [[lein-figwheel "0.5.18"]
+    :plugins [[lein-figwheel "0.5.13"]
               [lein-doo "0.1.8"]
               [lein-pdo "0.1.1"]]}}
 
