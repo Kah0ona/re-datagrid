@@ -1,4 +1,4 @@
-(defproject re-datagrid "0.2.18"
+(defproject re-datagrid "0.2.19"
   :description "A datagrid component for re-frame apps, with sorting, editing, etc."
   :url "https://github.com/Kah0ona/re-datagrid.git"
   :license {:name "MIT"}
@@ -10,7 +10,8 @@
                  [prismatic/schema "1.1.6"]
                  [fipp "0.6.10"] ;;pretty printer cljs
                  [com.andrewmcveigh/cljs-time "0.5.1"] ;date/time
-                 [re-frame "0.10.1"]]
+                 [re-frame "0.10.1"]
+                 [alandipert/storage-atom "2.0.1"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]]
 

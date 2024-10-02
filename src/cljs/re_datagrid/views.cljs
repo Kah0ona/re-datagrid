@@ -4,6 +4,7 @@
               [cljs.pprint :as pprint]
               [re-datagrid.events]
               [re-datagrid.schema :as ds]
+              [re-datagrid.local-db :as local-db]
               [re-datagrid.subs]
               [re-frame.core :as rf]
               [reagent.core :as r]
@@ -594,6 +595,8 @@
         initialized?    (rf/subscribe [:datagrid/initialized? id])
         loading?        (rf/subscribe [:datagrid/loading? loading-sub])]
     (fn [options fields]
+      (let [local-header-filter-expanded? (get-in @local-db/db [id :header-filter-expanded?])]
+        (rf/dispatch [:datagrid/header-filter-expanded? id local-header-filter-expanded? true]))
       (if-not @initialized?
         (do (rf/dispatch [:datagrid/initialize options fields])
             [:div.p-30
