@@ -4,7 +4,8 @@
             [taoensso.timbre :as timbre
              :refer-macros (log  trace  debug  info  warn  error  fatal  report
                                  logf tracef debugf infof warnf errorf fatalf reportf
-                                 spy get-env log-env)]))
+                                 spy get-env log-env)]
+            [re-datagrid.db :as db]))
 
 (defn get-next-sort-direction
   [c]
@@ -74,11 +75,17 @@
 
 (rf/reg-event-db
  :datagrid/header-filter-expanded?
- (fn [db [_ id expanded?]]
+ (fn [db [_ id expanded? no-local-db-update?]]
    (if expanded?
-     (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?)
+     (do
+       (when (not no-local-db-update?)
+         (swap! db/local-db assoc-in [id :header-filter-expanded?] expanded?))
+       (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?))
      ;;else toggle
-     (update-in db [:datagrid/data id :header-filter-expanded?] not))))
+     (do
+       (when (not no-local-db-update?)
+         (swap! db/local-db update-in [id :header-filter-expanded?] not))
+       (update-in db [:datagrid/data id :header-filter-expanded?] not)))))
 
 
 (rf/reg-event-fx
