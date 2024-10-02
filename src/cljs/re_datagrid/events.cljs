@@ -79,12 +79,12 @@
    (if expanded?
      (do
        (when (not no-local-db-update?)
-         (swap! db/local-db assoc-in [id :header-filter-expanded?] expanded?))
+         (swap! local-db/db assoc-in [id :header-filter-expanded?] expanded?))
        (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?))
      ;;else toggle
      (do
        (when (not no-local-db-update?)
-         (swap! db/local-db update-in [id :header-filter-expanded?] not))
+         (swap! local-db/db update-in [id :header-filter-expanded?] not))
        (update-in db [:datagrid/data id :header-filter-expanded?] not)))))
 
 
