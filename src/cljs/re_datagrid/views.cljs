@@ -596,70 +596,70 @@
         loading?        (rf/subscribe [:datagrid/loading? loading-sub])]
     (fn [options fields]
       (let [local-header-filter-expanded? (get-in @local-db/db [id :header-filter-expanded?])]
-        (rf/dispatch [:datagrid/header-filter-expanded? id local-header-filter-expanded? true])
-        (if-not @initialized?
-          (do (rf/dispatch [:datagrid/initialize options fields])
-              [:div.p-30
-               {:style {:text-align :center}}
-               [:div.preloader.pl-xl
-                [:svg.pl-circular
-                 {:viewBox "25 25 50 50"}
-                 [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]])
-          ;;else
-          (let [colspan (cond-> (count fields)
-                          (:checkbox-select options) inc)]
-            (when (not= options @current-options)
-              (rf/dispatch [:datagrid/update-options id options]))
-            (when (not= fields @current-fields)
-              (rf/dispatch [:datagrid/update-fields id fields]))
-            [:div
-             (when @show-sure?
-               [are-you-sure-modal id])
-             [:div.table-responsive
-              [:table.table.bootgrid-table
-               {:class (str (name id) " " (:additional-css-class-names options))}
-               (when-not (and (:hide-heading options)
-                              (not (:extra-header-row options)))
-                 [table-header id data-sub])
-               (when-not (empty?
-                          (filter (fn [f]
-                                    (not (nil? (:footer-cell f)))) fields))
-                 [table-footer id fields @records])
-               (cond
-                 @loading?
-                 [:tbody
-                  [:tr
-                   [:td {:col-span (+ (count fields) 2)}
-                    [:div.p-30
-                     {:style {:text-align :center}}
-                     [:div.preloader.pl-xl
-                      [:svg.pl-circular
-                       {:viewBox "25 25 50 50"}
-                       [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]]]]]
+        (rf/dispatch [:datagrid/header-filter-expanded? id local-header-filter-expanded? true]))
+      (if-not @initialized?
+        (do (rf/dispatch [:datagrid/initialize options fields])
+            [:div.p-30
+             {:style {:text-align :center}}
+             [:div.preloader.pl-xl
+              [:svg.pl-circular
+               {:viewBox "25 25 50 50"}
+               [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]])
+        ;;else
+        (let [colspan (cond-> (count fields)
+                        (:checkbox-select options) inc)]
+          (when (not= options @current-options)
+            (rf/dispatch [:datagrid/update-options id options]))
+          (when (not= fields @current-fields)
+            (rf/dispatch [:datagrid/update-fields id fields]))
+          [:div
+           (when @show-sure?
+             [are-you-sure-modal id])
+           [:div.table-responsive
+            [:table.table.bootgrid-table
+             {:class (str (name id) " " (:additional-css-class-names options))}
+             (when-not (and (:hide-heading options)
+                            (not (:extra-header-row options)))
+               [table-header id data-sub])
+             (when-not (empty?
+                        (filter (fn [f]
+                                  (not (nil? (:footer-cell f)))) fields))
+               [table-footer id fields @records])
+             (cond
+               @loading?
+               [:tbody
+                [:tr
+                 [:td {:col-span (+ (count fields) 2)}
+                  [:div.p-30
+                   {:style {:text-align :center}}
+                   [:div.preloader.pl-xl
+                    [:svg.pl-circular
+                     {:viewBox "25 25 50 50"}
+                     [:circle.plc-path {:r "20", :cy "50", :cx "50"}]]]]]]]
 
-                 (and (empty? @records) (not @creating?))
-                 [:tbody
-                  [:tr
-                   [:td.nodata {:style   {:padding-top "20px"}
-                                :col-span colspan}
-                    [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
+               (and (empty? @records) (not @creating?))
+               [:tbody
+                [:tr
+                 [:td.nodata {:style   {:padding-top "20px"}
+                              :col-span colspan}
+                  [:i (or (:no-records-text options) "Geen gegevens gevonden.")]]]]
 
-                 :otherwise
-                 [table-data id (:data-subscription options)])]
-              (when (:progressive-loading options)
-                [:div.re-datagrid-read-more-marker])
+               :otherwise
+               [table-data id (:data-subscription options)])]
+            (when (:progressive-loading options)
+              [:div.re-datagrid-read-more-marker])
 
-              (when (and (:show-max-num-rows options)
-                         (not @expanded?)
-                         (> (count @records) (:show-max-num-rows options)))
-                [:div.re-datagrid-button-container
-                 [:button.btn.btn-primary.btn-read-more
-                  {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon meer"]])
+            (when (and (:show-max-num-rows options)
+                       (not @expanded?)
+                       (> (count @records) (:show-max-num-rows options)))
+              [:div.re-datagrid-button-container
+               [:button.btn.btn-primary.btn-read-more
+                {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon meer"]])
 
-              (when (and
-                     (:show-max-num-rows options)
-                     @expanded?
-                     (> (count @records) (:show-max-num-rows options)))
-                [:div.re-datagrid-button-container
-                 [:button.btn.btn-primary.btn-read-less
-                  {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon minder"]])]]))))))
+            (when (and
+                   (:show-max-num-rows options)
+                   @expanded?
+                   (> (count @records) (:show-max-num-rows options)))
+              [:div.re-datagrid-button-container
+               [:button.btn.btn-primary.btn-read-less
+                {:on-click #(rf/dispatch [:datagrid/toggle-expand id])} "Toon minder"]])]])))))
