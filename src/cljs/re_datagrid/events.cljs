@@ -5,7 +5,7 @@
              :refer-macros (log  trace  debug  info  warn  error  fatal  report
                                  logf tracef debugf infof warnf errorf fatalf reportf
                                  spy get-env log-env)]
-            [re-datagrid.db :as db]))
+            [re-datagrid.local-db :as local-db]))
 
 (defn get-next-sort-direction
   [c]
