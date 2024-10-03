@@ -42,7 +42,9 @@
    (assert (:data-subscription opts)
            "No subscription for records. Please set a :data-subscription re-frame subscribe pattern on init-time.")
    (let [id (:grid-id opts)
-         header-filter-expanded? (get-in @local-db/db [id :header-filter-expanded?])]
+         header-filter-expanded? (-> @local-db/db
+                                     (get-in  [id :header-filter-expanded?])
+                                     boolean)]
      (when (:progressive-loading opts)
        (register-scroll-events id))
      (assoc-in db [:datagrid/data id] {:options                 (extend-options-with-defaults opts)
@@ -54,7 +56,7 @@
                                        :create-record           nil
                                        :expanded?               false
                                        :mass-select-check       false
-                                       :header-filter-expanded? (boolean header-filter-expanded?)
+                                       :header-filter-expanded? header-filter-expanded?
                                        :rec-marked-for-deletion nil
                                        :header-filter-values    {}
                                        :edit-rows               {} ;; map of pk -> rec
@@ -76,11 +78,9 @@
 (rf/reg-event-db
  :datagrid/header-filter-expanded?
  (fn [db [_ id expanded?]]
-   (if expanded?
-     (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?)
-     ;;else toggle
-     (update-in db [:datagrid/data id :header-filter-expanded?] not))))
-
+   (let [exp (or expanded? (not (get-in db [:datagrid/data id :header-filter-expanded?])))]
+     (swap! local-db/db assoc-in [id :header-filter-expanded?] exp)
+     (assoc-in db [:datagrid/data id :header-filter-expanded?] exp))))
 
 (rf/reg-event-fx
  :datagrid/sort-field
