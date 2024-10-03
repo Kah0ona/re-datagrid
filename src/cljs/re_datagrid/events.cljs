@@ -41,7 +41,8 @@
  (fn [db [_ opts fields]]
    (assert (:data-subscription opts)
            "No subscription for records. Please set a :data-subscription re-frame subscribe pattern on init-time.")
-   (let [id (:grid-id opts)]
+   (let [id (:grid-id opts)
+         header-filter-expanded? (get-in @local-db/db [id :header-filter-expanded?])]
      (when (:progressive-loading opts)
        (register-scroll-events id))
      (assoc-in db [:datagrid/data id] {:options                 (extend-options-with-defaults opts)
@@ -53,7 +54,7 @@
                                        :create-record           nil
                                        :expanded?               false
                                        :mass-select-check       false
-                                       :header-filter-expanded? false
+                                       :header-filter-expanded? (boolean header-filter-expanded?)
                                        :rec-marked-for-deletion nil
                                        :header-filter-values    {}
                                        :edit-rows               {} ;; map of pk -> rec
@@ -72,20 +73,13 @@
  (fn [db [_ grid-id o]]
    (assoc-in db [:datagrid/data grid-id :fields] o)))
 
-
 (rf/reg-event-db
  :datagrid/header-filter-expanded?
- (fn [db [_ id expanded? no-local-db-update?]]
+ (fn [db [_ id expanded?]]
    (if expanded?
-     (do
-       (when (not no-local-db-update?)
-         (swap! local-db/db assoc-in [id :header-filter-expanded?] expanded?))
-       (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?))
+     (assoc-in db [:datagrid/data id :header-filter-expanded?] expanded?)
      ;;else toggle
-     (do
-       (when (not no-local-db-update?)
-         (swap! local-db/db update-in [id :header-filter-expanded?] not))
-       (update-in db [:datagrid/data id :header-filter-expanded?] not)))))
+     (update-in db [:datagrid/data id :header-filter-expanded?] not))))
 
 
 (rf/reg-event-fx
