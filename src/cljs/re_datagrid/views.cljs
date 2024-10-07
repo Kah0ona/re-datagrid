@@ -29,6 +29,8 @@
      (fn debounced* [& args]
        (.apply (.-fire debouncer) debouncer (to-array args))))))
 
+(def debounced-dispatch (debounced))
+
 (defn clean-formatted-keys
   [r]
   (into {}
@@ -132,28 +134,35 @@
 (defmulti table-header-filter (fn [id field]
                                 (:type field)))
 
+
 (defmethod table-header-filter :default
   [id {:keys [name] :as field}]
-  (let [v (rf/subscribe [:datagrid/header-filter-value id name])]
+  (let [v (rf/subscribe [:datagrid/header-filter-value id name])
+        lv (r/atom @v)]
     (fn [id {:keys [name] :as field}]
       [:div.table-header-filter.m-b-10
        [:input.form-control
-        {:value       (or @v "")
+        {:value       (or @lv "")
          :placeholder "Filter..."
-         :on-change   #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value)])
-         :on-blur     #(rf/dispatch [:datagrid/header-filter-value id name @v true])
+         :on-change   #(do
+                         (reset! lv (-> % .-target .-value))
+                         (debounced-dispatch [:datagrid/header-filter-value id name @lv]))
+         :on-blur     #(debounced-dispatch [:datagrid/header-filter-value id name @lv true])
          :type        :text}]])))
 
 (defmethod table-header-filter :number
   [id {:keys [name] :as field}]
-  (let [v (rf/subscribe [:datagrid/header-filter-value id name])]
+  (let [v (rf/subscribe [:datagrid/header-filter-value id name])
+        lv (r/atom @v)]
     (fn [id {:keys [name] :as field}]
       [:div.table-header-filter.m-b-10
        [:input.form-control
-        {:value       (or @v "")
+        {:value       (or @lv "")
          :placeholder "Filter..."
-         :on-change   #(rf/dispatch [:datagrid/header-filter-value id name (-> % .-target .-value )])
-         :on-blur     #(rf/dispatch [:datagrid/header-filter-value id name @v true])
+         :on-change   #(do
+                         (reset! lv (-> % .-target .-value))
+                         (debounced-dispatch [:datagrid/header-filter-value id name @lv]))
+         :on-blur     #(debounced-dispatch [:datagrid/header-filter-value id name @lv true])
          :type        :number}]])))
 
 (defn table-header-cell

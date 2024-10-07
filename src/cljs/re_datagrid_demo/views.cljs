@@ -13,33 +13,31 @@
   (str "every-" (mod row-idx 3)))
 
 (def opts
-  (select-keys {:grid-id                    :my-grid
-                :data-subscription          [:large-data]
-                :id-field                   :id
-                :header-filters             true
-                :progressive-loading        true
-                :can-sort                   true
-                :can-edit                   true
-                :can-delete true
-                :can-reorder                true
-                :checkbox-select            true
-                :partition-fn my-partitioner
-                :show-max-num-rows          3
-                :loading-subscription       [:my-loading]
-                :sort-dispatch              [:sort]
-                :header-filter-dispatch     [:header-filter-dispatch]
-                :reorder-dispatch           [:reorder]
-                :extra-header-row           [:tr
-                                             [:th
-                                              {:col-span 6}
-                                              "Extra custom header row"]]
-                :create-dispatch            [:create]
-                :start-edit-dispatch        [:start-edit]
-                :update-dispatch            [:update]
-                :delete-dispatch            [:delete]
-                :additional-css-class-names "table-striped table-sm"}
-               [:id-field :data-subscription :grid-id]
-               ))
+  {:grid-id                    :my-grid
+   :data-subscription          [:large-data]
+   :id-field                   :id
+   :header-filters             true
+   :progressive-loading        true
+   :can-sort                   true
+   :can-edit                   true
+   :can-delete                 true
+   :can-reorder                true
+   :checkbox-select            true
+   :partition-fn               my-partitioner
+   :show-max-num-rows          3
+   :loading-subscription       [:my-loading]
+   :sort-dispatch              [:sort]
+   :header-filter-dispatch     [:header-filter-dispatch]
+   :reorder-dispatch           [:reorder]
+   :extra-header-row           [:tr
+                                [:th
+                                 {:col-span 6}
+                                 "Extra custom header row"]]
+   :create-dispatch            [:create]
+   :start-edit-dispatch        [:start-edit]
+   :update-dispatch            [:update]
+   :delete-dispatch            [:delete]
+   :additional-css-class-names "table-striped table-sm"})
 
 (def fields
   [{:name     :id
