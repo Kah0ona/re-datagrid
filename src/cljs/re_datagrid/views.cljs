@@ -56,7 +56,9 @@
           [:label
            [:input {:type      :checkbox
                     :checked   (if @record-selected? true false)
-                    :on-change #(rf/dispatch [:datagrid/toggle-checkbox id record])}]
+                    :on-click  (fn [e]
+                                 (.stopPropagation e)
+                                 (rf/dispatch [:datagrid/toggle-checkbox id record]))}]
            [:i.input-helper]]]]))))
 
 (defn are-you-sure-modal
@@ -100,7 +102,9 @@
     (fn [id record]
       [:span {:key "DELETE" :className "delete"}
        [:button.btn.btn-xs.btn-danger.waves-effect.waves-circle.waves-float
-        {:on-click #(rf/dispatch [:datagrid/delete-record-maybe id record])}
+        {:on-click (fn [e]
+                     (.stopPropagation e)
+                     (rf/dispatch [:datagrid/delete-record-maybe id record]))}
         [:i.zmdi.zmdi-close]]])))
 
 (defn reorder-cell-button-up
@@ -406,7 +410,8 @@
                                                 (let [f (:on-click field)]
                                                   (f (clean-formatted-keys record)
                                                      field e
-                                                     @options)))}
+                                                     @options))
+                                                (.stopPropagation e))}
                                formatted-value]
                               formatted-value)]
         [:td {:key       fieldname
@@ -479,7 +484,9 @@
                          false (assoc :on-click (:expand-handler @options)))
 
             atts (if (:on-record-click @options)
-                   (assoc atts :on-click #((:on-record-click @options) record @fields @options))
+                   (-> atts
+                       (assoc :on-click #((:on-record-click @options) record @fields @options))
+                       (update :style merge {:cursor :pointer}))
                    atts)
             cells (cond->> (doall
                             (map (fn [f]
