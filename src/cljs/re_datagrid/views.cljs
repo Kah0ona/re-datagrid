@@ -254,7 +254,7 @@
   [id]
   [:button.btn.btn-xs.btn-default.waves-effect.waves-circle.waves-float
    {:on-click #(rf/dispatch [:datagrid/header-filter-expanded? id])}
-   [:i.zmdi.zmdi-filter-list]])
+   [:i.zmdi.zmdi-search]])
 
 (defn table-header
   [id data-sub]
