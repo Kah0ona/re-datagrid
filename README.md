@@ -54,27 +54,8 @@ Add a formatter:
 ```
 
 ## Run demo application / development mode:
-
-The demo uses figwheel-main
-
-From Emacs/CIDER
 ```
-cider-jack-in-clj&cljs
-```
-When the prompt comes, type `dev`.
+npx shadow-cljs watch app
 
-From leiningen:
-```
-lein dev
-```
-
-Figwheel will automatically push cljs changes to the browser.
-
-Wait a bit, then browse to [http://localhost:3447/figwheel.html](http://localhost:3447/figwheel.html).
-
-## Production Build
-To compile clojurescript to javascript:
-
-```
-lein build
+navigate to http://localhost:3444
 ```

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"goog.i18n.cldrversion.js",
+"lineCount":8,
+"mappings":"AAAA,IAAA,CAAA,UAAA,CAAA,QAAA,CAAA,OAAA,CAAA;AAAA,cAAA;AAaAA,MAAKC,CAAAA,MAAL,CAAY,uBAAZ,CAAA;AACAD,MAAKC,CAAAA,MAAOC,CAAAA,sBAAZ,EAAA;AAGAC,SAAQC,CAAAA,aAAR,GAAwBJ,IAAKK,CAAAA,MAAL,CACpB,8EADoB,EAEpB,KAFoB,CAAxB;AAjBA,SAAA,OAAA;AAAA,CAAA,CAAA;;",
+"sources":["goog/i18n/cldrversion.js"],
+"sourcesContent":["/**\n * @license\n * Copyright The Closure Library Authors.\n * SPDX-License-Identifier: Apache-2.0\n */\n/**\n * @fileoverview This module houses utlities related to being able to change\n * what version of the CLDR dataset is used by Closure Library i18n packages.\n * The version of CLDR data to use is determined once during initial JS\n * evaluation and cached (using a goog.define). To ensure consistency of all\n * I18n operations throughout the lifetime of an application this module does\n * not support dynamically swapping the version of CLDR in use at runtime.\n */\ngoog.module('goog.i18n.cldrversion');\ngoog.module.declareLegacyNamespace();\n\n/** @define {boolean} */\nexports.USE_CLDR_NEXT = goog.define(\n    'goog.i18n.USE_CLDR_NEXT_FOR_TESTING_USE_ONLY_PLEASE_DO_NOT_USE_IN_PRODUCTION',\n    false);\n"],
+"names":["goog","module","declareLegacyNamespace","exports","USE_CLDR_NEXT","define"]
+}

@@ -4,13 +4,8 @@
              :refer-macros (log  trace  debug  info  warn  error  fatal  report
                                  logf tracef debugf infof warnf errorf fatalf reportf
                                  spy get-env log-env)]
-            [reagent.core :as r]
-            [cljs-time.coerce :as coerce]
-            [cljs-time.format :as fmt]))
+            [reagent.core :as r]))
 
-;;TODO make this a dynamic var that can be set
-(def time-formatter (fmt/formatter "dd-MM-yyyy HH:mm"))
-(def date-formatter (fmt/formatter "dd-MM-yyyy"))
 
 (defn sensible-sort
   [k r]
@@ -135,22 +130,6 @@
   [_]
   (fn [v r]
     (if v "ja" "nee")))
-
-(defmethod default-formatter :date
-  [_]
-  (fn [v r]
-    (if v
-      (let [v (coerce/from-date v)]
-        (fmt/unparse date-formatter v))
-      "")))
-
-(defmethod default-formatter :date-time
-  [_]
-  (fn [v r]
-    (if v
-      (let [v (coerce/from-date v)]
-        (fmt/unparse time-formatter v))
-      "")))
 
 (defn apply-formatters
   "Applies formatters under <keyname>-formatted key"

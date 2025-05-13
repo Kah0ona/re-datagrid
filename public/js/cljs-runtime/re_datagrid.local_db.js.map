@@ -1,0 +1,1 @@
+{"version":3,"sources":["re_datagrid/local_db.cljs"],"mappings":";AAGA,AAAKA,0BAAG,uHAAA,vHAACC,sCAAc,6CAAA,7CAACC","names":["re-datagrid.local-db/db","alandipert.storage-atom/local-storage","cljs.core.atom"],"sourcesContent":["(ns re-datagrid.local-db\n  (:require [alandipert.storage-atom :refer [local-storage]]))\n\n(def db (local-storage (atom {}) :re-datagrid))\n"]}

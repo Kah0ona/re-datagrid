@@ -1,18 +1,19 @@
-{:paths ["src" "resources"]
+{:paths ["src/cljs" "resources"]
  :deps
- {com.bhauman/figwheel-main     {:mvn/version "0.2.18"}
-  org.clojure/clojure           {:mvn/version "1.10.0"},
-  reagent/reagent               {:mvn/version "0.8.1"},
-  fipp/fipp                     {:mvn/version "0.6.10"},
-  org.clojure/clojurescript     {:mvn/version "1.10.520"},
-  com.taoensso/timbre           {:mvn/version "4.10.0"},
-  prismatic/schema              {:mvn/version "1.1.6"},
-  com.andrewmcveigh/cljs-time   {:mvn/version "0.5.1"},
-  re-frame/re-frame             {:mvn/version "0.10.1"},
-  re-frame-utils/re-frame-utils {:mvn/version "0.1.0"},
-  alandipert/storage-atom       {:mvn/version "2.0.1"}}
+ {thheller/shadow-cljs        {:mvn/version "3.0.5"}
+  org.clojure/clojure         {:mvn/version "1.12.0"},
+  reagent/reagent             {:mvn/version "1.3.0"},
+  org.clojure/clojurescript   {:mvn/version "1.12.38"},
+  com.google.javascript/closure-compiler-unshaded {:mvn/version "v20250407"}
+  com.taoensso/timbre         {:mvn/version "6.7.0"},
+  prismatic/schema            {:mvn/version "1.4.1"},
+  re-frame/re-frame           {:mvn/version "1.4.3"},
+  alandipert/storage-atom     {:mvn/version "2.0.1"}}
  ;;usage: clj -A:release --patch # patch, minor, major
  ;;(also deploys to clojars)
  :aliases
- {:release {:extra-deps {applied-science/deps-library {:mvn/version "0.4.0"}}
-            :main-opts  ["-m" "applied-science.deps-library"]}}}
+ {:dev     {:extra-deps {vvvvalvalval/scope-capture {:mvn/version "0.3.3"}}
+            :main-opts  ["-m" "shadow.cljs.devtools.cli"]}
+  :build {:deps       {io.github.clojure/tools.build
+                         {:mvn/version "0.10.8"}}
+            :ns-default build}}}

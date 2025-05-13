@@ -1,4 +1,4 @@
-(ns ^:figwheel-hooks re-datagrid-demo.core
+(ns re-datagrid-demo.core
   (:require
    [re-datagrid.config :as config]
    [re-datagrid-demo.views :as my-views]
@@ -8,7 +8,10 @@
    [re-datagrid.subs]
    [re-datagrid.views]
    [re-frame.core :as re-frame]
+   [reagent.dom :as rdom]
    [reagent.core :as reagent]))
+
+(defonce root (atom nil))
 
 (defn dev-setup []
   (when config/debug?
@@ -17,17 +20,19 @@
     (enable-console-print!)
     (println "dev mode")))
 
-(defn ^:after-load mount-root []
+(defn ^:dev/after-load
+  mount-root []
   (re-frame/clear-subscription-cache!)
-  (reagent/render [my-views/main-panel]
-                  (.getElementById js/document "app")))
+  (let [container (.getElementById js/document "app")]
+    (rdom/render  [my-views/main-panel] container)))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [:initialize-db])
   (dev-setup)
   (mount-root))
 
+
 (defn -main
-  "Used for figwheel main"
+  ""
   [args]
   (init))

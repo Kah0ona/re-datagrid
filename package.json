@@ -1,0 +1,29 @@
+{
+  "name": "re-datagrid",
+  "version": "1.0.1",
+  "description": "[![Clojars Project](https://img.shields.io/clojars/v/re-datagrid.svg)](https://clojars.org/re-datagrid)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kah0ona/re-datagrid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kah0ona/re-datagrid/issues"
+  },
+  "homepage": "https://github.com/Kah0ona/re-datagrid#readme",
+  "devDependencies": {
+    "shadow-cljs": "^3.0.5"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

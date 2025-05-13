@@ -1,6 +1,5 @@
 (ns re-datagrid-demo.views
-  (:require [fipp.clojure :refer [pprint]]
-            [re-datagrid.views :as datagrid]
+  (:require [re-datagrid.views :as datagrid]
             [re-frame.core :as rf]
             [reagent.core :as r]
             [taoensso.timbre :as timbre
@@ -57,10 +56,10 @@
     :type :no-edit
     :title "Surname"}
    {:name  :birthdate
-    :type  :date
+    :formatter (fn [v r] (str v))
     :title "Birthdate"}
    {:name  :login
-    :type  :date-time
+    :formatter (fn [v r] (str v))
     :title "Logged in at"}
    {:name  :male
     :type  :yesno

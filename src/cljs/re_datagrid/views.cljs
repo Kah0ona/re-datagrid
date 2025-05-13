@@ -1,6 +1,5 @@
 (ns re-datagrid.views
-    (:require [cljs-time.coerce :as coerce]
-              [cljs-time.format :as fmt]
+    (:require
               [cljs.pprint :as pprint]
               [re-datagrid.events]
               [re-datagrid.schema :as ds]
@@ -39,9 +38,6 @@
            (clojure.string/ends-with? (name k) "-formatted" ))
          r)))
 
-(def dutch-formatter (fmt/formatter "dd-MM-yyyy HH:mm"))
-(def dutch-formatter-date (fmt/formatter "dd-MM-yyyy"))
-
 (defn is-checked?
   [pkey record selected-records]
   (let [rs (keys (group-by pkey selected-records))]
@@ -58,9 +54,9 @@
           [:label
            [:input {:type      :checkbox
                     :checked   (if @record-selected? true false)
-                    :on-click  (fn [e]
-                                 (.stopPropagation e)
-                                 (rf/dispatch [:datagrid/toggle-checkbox id record]))}]
+                    :on-click  (fn [^js e] (.stopPropagation e))
+                    :on-change (fn [e]
+                                  (rf/dispatch [:datagrid/toggle-checkbox id record]))}]
            [:i.input-helper]]]]))))
 
 (defn are-you-sure-modal
@@ -104,7 +100,7 @@
     (fn [id record]
       [:span {:key "DELETE" :className "delete"}
        [:button.btn.btn-xs.btn-danger.waves-effect.waves-circle.waves-float
-        {:on-click (fn [e]
+        {:on-click (fn [^js e]
                      (.stopPropagation e)
                      (rf/dispatch [:datagrid/delete-record-maybe id record]))}
         [:i.zmdi.zmdi-close]]])))
@@ -311,7 +307,7 @@
           [:input.form-control {:type      "number"
                                 :value     v
                                 :on-change #(rf/dispatch [:datagrid/update-edited-record id pk
-                                                          (:name field) (.-target.value %)])}]]]))))
+                                                          (:name field) (.-target.value ^js %)])}]]]))))
 
 (defmethod edit-cell :custom
   [id field pk]
@@ -335,7 +331,7 @@
            [:select.form-control
             {:value     (if v "true" "false")
              :on-change #(rf/dispatch [:datagrid/update-edited-record id pk
-                                      (:name field) (= "true" (.-target.value %))])}
+                                      (:name field) (= "true" (.-target.value ^js %))])}
             [:option {:value "true"}  "ja"]
             [:option {:value "false"} "nee"]]]]]))))
 
@@ -362,7 +358,7 @@
           [:input.form-control {:type      "text"
                                 :value     v
                                 :on-change #(rf/dispatch [:datagrid/update-edited-record id pk
-                                                          (:name field) (.-target.value %)])}]]]))))
+                                                          (:name field) (.-target.value ^js %)])}]]]))))
 
 (defn create-row
   [id]
@@ -415,12 +411,12 @@
             align           (if (nil? (:align field)) :text-left (:align field))
             formatted-value (if is-clickable?
                               [:a.table-link {:on-click
-                                              (fn [e]
+                                              (fn [^js e]
+                                                (.stopPropagation e)
                                                 (let [f (:on-click field)]
                                                   (f (clean-formatted-keys record)
                                                      field e
-                                                     @options))
-                                                (.stopPropagation e))}
+                                                     @options)))}
                                formatted-value]
                               formatted-value)]
         [:td {:key       fieldname
@@ -552,8 +548,7 @@
 
 (defn table-data
   [id data-sub]
-  (let [
-        options         (rf/subscribe [:datagrid/options id])
+  (let [options         (rf/subscribe [:datagrid/options id])
         fields          (rf/subscribe [:datagrid/fields id])
         creating?       (rf/subscribe [:datagrid/creating? id])
         all-records     (rf/subscribe [:datagrid/records data-sub])
@@ -575,10 +570,6 @@
          (cond-> rows
            @creating? (conj ^{:key -9}
                             [edit-row id nil]))]))))
-
-
-
-
 
 (defn table-footer
   [id fields records]

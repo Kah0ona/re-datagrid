@@ -1,0 +1,19 @@
+{:deps     true
+ :paths ["src/cljs" "resources"]
+ :dev-http {3444 "public"}
+ :builds
+ {:app ;;dev
+  {:target           :browser
+   :output-dir       "public/js"
+   :asset-path       "/js"
+   :modules          {:main {:init-fn re-datagrid-demo.core/init}}
+   :compiler-options {:warnings {:ns-regexp-whitelist ["^re-datagrid\\..*"
+                                                       "^re-datagrid-demo\\..*"
+                                                       ]
+                                 :infer               false
+                                 :fn-arity            false
+                                 :redef               false
+                                 :fn-deprecated       false
+                                 :undeclared-var      false
+                                 :deprecated          true}}}
+  }}

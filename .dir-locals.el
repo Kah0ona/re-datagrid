@@ -1,4 +1,4 @@
-((nil . ((cider-preferred-build-tool          . clojure-cli)
-         (cider-default-cljs-repl             . figwheel-main)
-         (cider-figwheel-main-default-options . "dev")
-         (cider-repl-display-help-banner      . nil))))
+((nil . ((cider-preferred-build-tool . shadow-cljs)
+         (cider-default-cljs-repl . shadow)
+         (cider-shadow-default-options . "app")
+         (cider-shadow-watched-builds . ("app")))))

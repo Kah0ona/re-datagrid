@@ -21,3 +21,10 @@ misc/
 .DS_Store
 .rebel_readline_history
 doo-index.html
+.clojars
+package-lock.json
+.shadow-cljs
+.cpcache
+node_modules
+re-datagrid-0.2.1.pom.asc
+*~undo-tree~
